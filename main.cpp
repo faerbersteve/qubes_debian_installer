@@ -24,8 +24,8 @@ int main()
     packages.push_back(new qubesPkg("qubes-repo-templates",""));
     packages.push_back(new qubesPkg("qubes-gui-common",""));
     packages.push_back(new qubesPkg("qubes-gui-daemon",""));
-    packages.push_back(new qubesPkg("qubes-gui-agent-linux",""));
-    packages.push_back(new qubesPkg("qubes-core-admin-client",""));
+    //packages.push_back(new qubesPkg("qubes-gui-agent-linux","")); //issue with missing Trolltech.conf
+    packages.push_back(new qubesPkg("qubes-core-admin-client","",false,true)); //sphinxdoc throws error
     packages.push_back(new qubesPkg("qubes-app-linux-img-converter","")); //not working, python qubesimgconverter missing
 
     packages.push_back(new qubesPkg("qubes-artwork","")); //not working, misses dependency qubesimgconverter
