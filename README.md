@@ -25,7 +25,9 @@ Developed & tested on Ubuntu 21.10
 Known issues:
   - dependencies needs to be installed manually to met requirements to build the package
   
-  - qubes-core-admin is missing debian files
+  - qubes-core-admin is missing debian files, fixed in this [repo](https://github.com/faerbersteve/qubes-core-admin)
+  - qubes-core-admin-client fails because of issue with sphinx `Sphinx error:
+Undocumented arguments for command 'qvm-template': '--keep-cache, --verbose, -q, -v'`, fixed in this [repo](https://github.com/faerbersteve/qubes-core-admin-client)
   
    - qubes-gui-agent-linux fails with error: dh_install: warning: Cannot find (any matches for) "etc/xdg/Trolltech.conf" (tried in ., debian/tmp)
 
