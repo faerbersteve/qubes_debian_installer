@@ -20,18 +20,20 @@ int main()
     packages.push_back(new qubesPkg("qubes-core-qrexec",""));
     packages.push_back(new qubesPkg("qubes-rpm-oxide",""));
     packages.push_back(new qubesPkg("qubes-core-admin","",false,true)); //no debian files in qubes github repo
+    packages.push_back(new qubesPkg("qubes-linux-utils","python3-qubesimgconverter"));
 
     packages.push_back(new qubesPkg("qubes-repo-templates",""));
     packages.push_back(new qubesPkg("qubes-gui-common",""));
     packages.push_back(new qubesPkg("qubes-gui-daemon",""));
-    //packages.push_back(new qubesPkg("qubes-gui-agent-linux","")); //issue with missing Trolltech.conf
+    packages.push_back(new qubesPkg("qubes-gui-agent-linux","",false,true)); //issue with missing Trolltech.conf
     packages.push_back(new qubesPkg("qubes-core-admin-client","",false,true)); //sphinxdoc throws error
-    packages.push_back(new qubesPkg("qubes-app-linux-img-converter","")); //not working, python qubesimgconverter missing
+    packages.push_back(new qubesPkg("qubes-app-linux-img-converter","")); //needs python qubesimgconverter missing
 
-    packages.push_back(new qubesPkg("qubes-artwork","")); //not working, misses dependency qubesimgconverter
+    packages.push_back(new qubesPkg("qubes-artwork","")); //needs dependency qubesimgconverter
     packages.push_back(new qubesPkg("qubes-manager","",true)); //has qt5 dependency
     packages.push_back(new qubesPkg("qubes-desktop-linux-common",""));
-    //
+
+
     for(auto p :packages)
     {
         ret=p->download();
@@ -74,6 +76,9 @@ int main()
     {
         p->cleanUp();
     }
+
+    cout << "Created all packages, ready for install" << endl;
+    getchar();
 
     return 0;
 }
