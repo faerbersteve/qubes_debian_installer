@@ -16,18 +16,17 @@ inline bool file_exists (const std::string& name) {
     return (stat (name.c_str(), &buffer) == 0);
 }
 
-qubesPkg::qubesPkg(std::string projName,std::string pkgName): qubesPkg(projName,pkgName,false)
+qubesPkg::qubesPkg(std::string projName): qubesPkg(projName,false)
 {
 }
 
-qubesPkg::qubesPkg(std::string projName, std::string pkgName, bool ignoreDep) : qubesPkg(projName,pkgName,ignoreDep,false)
+qubesPkg::qubesPkg(std::string projName, bool ignoreDep) : qubesPkg(projName,ignoreDep,false)
 {
 }
 
-qubesPkg::qubesPkg(std::string projName, std::string pkgName, bool ignoreDep, bool usePersonalRepo)
+qubesPkg::qubesPkg(std::string projName, bool ignoreDep, bool usePersonalRepo)
 {
     projectName=projName;
-    packageName=pkgName;
 
     ignoreDependencies=ignoreDep;
     this->usePersonalRepo=usePersonalRepo;
@@ -80,6 +79,17 @@ int qubesPkg::unzip()
         return ret;
     }
 
+    //remove zip file
+    cmd="rm "+ projectName +".zip";
+
+    ret=runCmd(cmd);
+
+    if (ret!=0)
+    {
+        cout << "error while removing zip file..." << endl;
+        return ret;
+    }
+
     folderName=projectName+"-master";
 
     if (!file_exists(folderName))
@@ -102,9 +112,9 @@ int qubesPkg::unzip()
     cout << "unzipped" << endl;
 }
 
-void qubesPkg::addBuildFolder(std::string folder)
+void qubesPkg::addPackageName(std::string pkgName, PkgInstallFlag installForBuildProc)
 {
-    buildFolders.push_back(folder);
+
 }
 
 int qubesPkg::createPackage()
@@ -113,6 +123,17 @@ int qubesPkg::createPackage()
     int ret{0};
 
     cout << "Create package " << projectName << endl;
+
+    if (projectName=="qubes-python-qasync")
+    {
+        cmd="cd " + projectName + " && wget -c " + "https://files.pythonhosted.org/packages/source/q/qasync/qasync-0.23.0.tar.gz";
+
+        ret=runCmd(cmd);
+
+        cmd="cd " + projectName + " && tar -xf qasync-0.23.0.tar.gz && mv ./qasync-0.23.0/* ./";
+
+        ret=runCmd(cmd);
+    }
 
     cmd="cd " + projectName + " && " + debPkgBuildCmd;
 
@@ -131,12 +152,20 @@ int qubesPkg::createPackage()
     return 0;
 }
 
-int qubesPkg::installDevPackage()
+int qubesPkg::installPackages(bool all)
 {
-    if (packageName.length()>0)
+    for(auto pkg : packages)
     {
-        installPkg(packageName);
-        installPkg(packageName+"-dev");
+        if (!all && (pkg.second==PkgInstallFlag::FOR_DEV || pkg.second==PkgInstallFlag::ALL))
+        {
+            //install for build process
+            installPkg(pkg.first);
+        }
+        else if (all && (pkg.second==PkgInstallFlag::FOR_PROD || pkg.second==PkgInstallFlag::ALL))
+        {
+            //install for production
+            installPkg(pkg.first);
+        }
     }
 
     return 0;

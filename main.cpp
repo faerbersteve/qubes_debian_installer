@@ -5,80 +5,201 @@
 
 using namespace std;
 
+std::vector<qubesPkg*> getPackages()
+{
+    std::vector<qubesPkg*> packages{};
+    qubesPkg* qPack=nullptr;
+
+    //load package list
+    qPack=new qubesPkg("qubes-core-vchan-xen");
+    qPack->addPackageName("libvchan-xen-dev", PkgInstallFlag::FOR_DEV);
+    qPack->addPackageName("libvchan-xen", PkgInstallFlag::ALL);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-core-qubesdb");
+    qPack->addPackageName("qubesdb-dev", PkgInstallFlag::FOR_DEV);
+    qPack->addPackageName("libqubesdb", PkgInstallFlag::ALL);
+    qPack->addPackageName("python3-qubesdb", PkgInstallFlag::ALL);
+    qPack->addPackageName("qubesdb", PkgInstallFlag::ALL);
+    qPack->addPackageName("qubesdb-vm", PkgInstallFlag::IGNORE);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-core-qrexec");
+    qPack->addPackageName("libqrexec-utils2", PkgInstallFlag::ALL);
+    qPack->addPackageName("libqrexec-utils-dev", PkgInstallFlag::FOR_DEV);
+    qPack->addPackageName("qubes-core-qrexec", PkgInstallFlag::FOR_PROD);
+    qPack->addPackageName("python3-qrexec", PkgInstallFlag::FOR_PROD);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-rpm-oxide");
+    qPack->addPackageName("qubes-rpm-oxide", PkgInstallFlag::FOR_PROD);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-core-admin",false,true); //no debian files in qubes github repo
+    qPack->addPackageName("qubes-core-dom0", PkgInstallFlag::FOR_PROD);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-linux-utils");
+    qPack->addPackageName("python3-qubesimgconverter", PkgInstallFlag::ALL);
+    qPack->addPackageName("qubes-utils", PkgInstallFlag::FOR_PROD);
+    qPack->addPackageName("qubes-kernel-vm-support", PkgInstallFlag::FOR_PROD);
+    qPack->addPackageName("libqubes-rpc-filecopy-dev", PkgInstallFlag::FOR_DEV);
+    qPack->addPackageName("libqubes-rpc-filecopy2", PkgInstallFlag::FOR_PROD);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-repo-templates");
+    qPack->addPackageName("qubes-repo-templates", PkgInstallFlag::FOR_PROD);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-gui-common");
+    qPack->addPackageName("qubes-gui-common", PkgInstallFlag::FOR_PROD);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-gui-daemon");
+    qPack->addPackageName("qubes-gui-daemon", PkgInstallFlag::FOR_PROD);
+    qPack->addPackageName("qubes-gui-daemon-pulseaudio", PkgInstallFlag::FOR_PROD);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-gui-agent-linux", false,true); //issue with missing Trolltech.conf
+
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-core-admin-client",false,true); //sphinxdoc throws error
+    qPack->addPackageName("python3-qubesadmin", PkgInstallFlag::FOR_PROD);
+    qPack->addPackageName("qubes-core-admin-client", PkgInstallFlag::FOR_PROD);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-app-linux-img-converter");
+    qPack->addPackageName("qubes-img-converter", PkgInstallFlag::FOR_PROD);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-artwork"); //needs dependency qubesimgconverter
+    qPack->addPackageName("qubes-artwork", PkgInstallFlag::FOR_PROD);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-python-qasync");
+    qPack->addPackageName("python3-qasync", PkgInstallFlag::ALL);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-manager"); //has qubes-python-qasync dependency
+
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-desktop-linux-common");
+
+
+    packages.push_back(qPack);
+
+    return packages;
+}
+
 int main()
 {
     std::vector<qubesPkg*> packages{};
+    char choice{};
     int ret{0};
     bool hasError{false};
+    bool installQubes{true};
 
-    cout << "---Qubes debian/ubuntu package creator---" << endl;
+    cout << "---Qubes debian/ubuntu package creator & installer---" << endl;
 
-    qubesPkg::init();
+    cout << "deb files will be created in the output folder" << endl;
 
-    packages.push_back(new qubesPkg("qubes-core-vchan-xen","libvchan-xen"));
-    packages.push_back(new qubesPkg("qubes-core-qubesdb",""));
-    packages.push_back(new qubesPkg("qubes-core-qrexec",""));
-    packages.push_back(new qubesPkg("qubes-rpm-oxide",""));
-    packages.push_back(new qubesPkg("qubes-core-admin","",false,true)); //no debian files in qubes github repo
-    packages.push_back(new qubesPkg("qubes-linux-utils","python3-qubesimgconverter"));
+    cout << "Do you want to create or install the deb packages? (c/i)" << endl;
 
-    packages.push_back(new qubesPkg("qubes-repo-templates",""));
-    packages.push_back(new qubesPkg("qubes-gui-common",""));
-    packages.push_back(new qubesPkg("qubes-gui-daemon",""));
-    packages.push_back(new qubesPkg("qubes-gui-agent-linux","",false,true)); //issue with missing Trolltech.conf
-    packages.push_back(new qubesPkg("qubes-core-admin-client","",false,true)); //sphinxdoc throws error
-    packages.push_back(new qubesPkg("qubes-app-linux-img-converter","")); //needs python qubesimgconverter missing
+    choice= getchar();
 
-    packages.push_back(new qubesPkg("qubes-artwork","")); //needs dependency qubesimgconverter
-    packages.push_back(new qubesPkg("qubes-manager","",true)); //has qt5 dependency
-    packages.push_back(new qubesPkg("qubes-desktop-linux-common",""));
+    packages=getPackages();
 
-
-    for(auto p :packages)
+    if (choice =='c' || choice=='C')
     {
-        ret=p->download();
+        cout << "starting with downloading and creating deb packages..." << endl;
 
-        if (ret!=0)
+        qubesPkg::init();
+
+        for(auto p :packages)
         {
-            cout << "Error while downloading project " << p->projectName << endl;
-            hasError=true;
-            break;
+            ret=p->download();
+
+            if (ret!=0)
+            {
+                cout << "Error while downloading project " << p->projectName << endl;
+                hasError=true;
+                break;
+            }
+
+            ret=p->createPackage();
+
+            if (ret!=0)
+            {
+                cout << "Error while create package of project " << p->projectName << endl;
+                hasError=true;
+                break;
+            }
+
+            ret=p->installPackages(false);
+
+            if (ret!=0)
+            {
+                cout << "Error while install package(s) of project " << p->projectName << endl;
+                hasError=true;
+                break;
+            }
         }
 
-        ret=p->createPackage();
-
-        if (ret!=0)
+        if (hasError)
         {
-            cout << "Error while create package of project " << p->projectName << endl;
-            hasError=true;
-            break;
+            getchar();
+            return ret;
         }
 
-        ret=p->installDevPackage();
+        cout << "Clean up" << endl;
 
-        if (ret!=0)
+        for(auto p :packages)
         {
-            cout << "Error while install package(s) of project " << p->projectName << endl;
-            hasError=true;
-            break;
+            p->cleanUp();
+        }
+
+        cout << "Created all packages, ready for install" << endl;
+        cout << "Do you want to continue and install the packages? (y/n)" << endl;
+
+        choice= getchar();
+
+        if (!(choice =='y' || choice=='Y'))
+        {
+            //stop
+            installQubes=false;
         }
     }
-
-    if (hasError)
+    else
     {
-        getchar();
-        return ret;
+        cout << "skip creation of debian packages..." << endl;
     }
 
-    cout << "Clean up" << endl;
-
-    for(auto p :packages)
+    if (installQubes)
     {
-        p->cleanUp();
+        cout << "starting with installation..." << endl;
+
     }
 
-    cout << "Created all packages, ready for install" << endl;
+
+    cout << "reached end of programm..." << endl;
     getchar();
-
+    getchar();
     return 0;
 }

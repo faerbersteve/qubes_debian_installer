@@ -2,24 +2,33 @@
 #define QUBESPKG_H
 #include <string>
 #include <vector>
+#include <map>
+
+enum class PkgInstallFlag
+{
+    ALL,
+    FOR_DEV,
+    FOR_PROD,
+    IGNORE
+};
 
 class qubesPkg
 {
 public:
 
-    qubesPkg(std::string projName,std::string pkgName);
-    qubesPkg(std::string projName,std::string pkgName, bool ignoreDep);
-    qubesPkg(std::string projName,std::string pkgName, bool ignoreDep, bool usePersonalRepo);
+    qubesPkg(std::string projName);
+    qubesPkg(std::string projName, bool ignoreDep);
+    qubesPkg(std::string projName, bool ignoreDep, bool usePersonalRepo);
 
     int download();
 
     int unzip();
 
-    void addBuildFolder(std::string folder);
+    void addPackageName(std::string pkgName,PkgInstallFlag installForBuildProc);
 
     int createPackage();
 
-    int installDevPackage();
+    int installPackages(bool all=false);
 
     void cleanUp();
 
@@ -31,11 +40,10 @@ public:
     bool usePersonalRepo{false};
     std::string projectName{};
 private:
-    std::string packageName{};
     std::string projectUrl{};
     std::string packageVersion{};
 
-    std::vector<std::string> buildFolders{};
+    std::map<std::string,PkgInstallFlag> packages{};
     std::vector<std::string> installedPkg{};
 
     static int runCmd(std::string cmd);
