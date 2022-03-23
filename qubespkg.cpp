@@ -110,11 +110,13 @@ int qubesPkg::unzip()
     readVersion();
 
     cout << "unzipped" << endl;
+
+    return 0;
 }
 
 void qubesPkg::addPackageName(std::string pkgName, PkgInstallFlag installForBuildProc)
-{
-
+{ 
+    packages.insert(std::pair<std::string,PkgInstallFlag>(pkgName,installForBuildProc)); 
 }
 
 int qubesPkg::createPackage()
