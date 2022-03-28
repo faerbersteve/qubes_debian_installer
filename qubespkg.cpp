@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include "qubespkg.h"
+#include "debiancontrolfile.h"
 
 using namespace std;
 
@@ -116,11 +117,12 @@ int qubesPkg::unzip()
 
 void qubesPkg::addPackageName(std::string pkgName, PkgInstallFlag installForBuildProc)
 { 
-    packages.insert(std::pair<std::string,PkgInstallFlag>(pkgName,installForBuildProc)); 
+    packages.insert(std::pair<std::string,PkgInstallFlag>(pkgName,installForBuildProc));
 }
 
 int qubesPkg::createPackage()
 {
+    std::vector<std::string> depPkg;
     std::string cmd{};
     int ret{0};
 
@@ -135,6 +137,24 @@ int qubesPkg::createPackage()
         cmd="cd " + projectName + " && tar -xf qasync-0.23.0.tar.gz && mv ./qasync-0.23.0/* ./";
 
         ret=runCmd(cmd);
+    }
+
+    //check for dependencies
+    debianControlFile dcf("./"+projectName +"/debian/control");
+
+    depPkg=dcf.getBuildDependencies();
+
+    if (depPkg.size()>0)
+    {
+        cout << "Check dependencies for package " << projectName << endl;
+
+        for (auto p:depPkg)
+        {
+            if (!isPackageInstalled(p))
+            {
+                installPkgAPT(p);
+            }
+        }
     }
 
     cmd="cd " + projectName + " && " + debPkgBuildCmd;
@@ -218,7 +238,7 @@ int qubesPkg::installPkg(std::string pkg)
     std::string cmd{};
     int ret{0};
 
-    pkgFile="./"+pkg+"_"+packageVersion+debPkgEnd;
+    pkgFile="./"+projectName+"/"+pkg+"_"+packageVersion+debPkgEnd;
 
     if (file_exists(pkgFile))
     {
@@ -236,6 +256,23 @@ int qubesPkg::installPkg(std::string pkg)
 
         return 1;
     }
+    else
+    {
+        cout << "couldn't find file " << pkgFile << endl;
+        return -1;
+    }
+
+    return 0;
+}
+
+int qubesPkg::installPkgAPT(std::string pkg)
+{
+    int ret{0};
+
+    ret= runCmd("apt install -y " + pkg);
+
+    if (ret==0)
+        return 1;
 
     return 0;
 }
@@ -247,6 +284,18 @@ int qubesPkg::removePkg(std::string pkg)
     cmd="dpkg -r " + pkg;
 
     return runCmd(cmd.c_str());
+}
+
+int qubesPkg::isPackageInstalled(std::string p)
+{
+    int r{0};
+
+    r= runCmd("dpkg -s " + p);
+
+    if (r!=0)
+        return 0;
+
+    return 1;
 }
 
 int qubesPkg::removeFolder()

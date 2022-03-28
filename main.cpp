@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include "qubespkg.h"
+#include "debiancontrolfile.h"
 
 using namespace std;
 
@@ -12,8 +13,8 @@ std::vector<qubesPkg*> getPackages()
 
     //load package list
     qPack=new qubesPkg("qubes-core-vchan-xen");
-    qPack->addPackageName("libvchan-xen-dev", PkgInstallFlag::FOR_DEV);
     qPack->addPackageName("libvchan-xen", PkgInstallFlag::ALL);
+    qPack->addPackageName("libvchan-xen-dev", PkgInstallFlag::FOR_DEV);
 
     packages.push_back(qPack);
 

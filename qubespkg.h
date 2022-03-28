@@ -46,13 +46,17 @@ private:
     std::map<std::string,PkgInstallFlag> packages{};
     std::vector<std::string> installedPkg{};
 
-    static int runCmd(std::string cmd);
     int installPkg(std::string pkg);
+    int installPkgAPT(std::string pkg);
     int removePkg(std::string pkg);
+
+    int isPackageInstalled(std::string p);
 
     int removeFolder();
 
     void getProjectUrl();
+
+    static int runCmd(std::string cmd);
 };
 
 #endif // QUBESPKG_H
