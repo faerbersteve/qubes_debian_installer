@@ -65,11 +65,13 @@ void debianControlFile::readFile()
                 iPos2=line.find(",",iPos);
             }
 
-            tmpStr=line.substr(iPos+1);
+            if (iPos+1<line.length())
+            {
+                tmpStr=line.substr(iPos+1);
 
-            if (tmpStr.length()>0)
-                buildDep.push_back(tmpStr);
-
+                if (tmpStr.length()>0)
+                    buildDep.push_back(tmpStr);
+            }
         }
     }
     f.close();
