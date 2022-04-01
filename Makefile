@@ -54,9 +54,11 @@ OBJECTS_DIR   = ./
 
 SOURCES       = main.cpp \
 		qubesinstallhelper.cpp \
+		debiancontrolfile.cpp \
 		qubespkg.cpp 
 OBJECTS       = main.o \
 		qubesinstallhelper.o \
+		debiancontrolfile.o \
 		qubespkg.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -86,6 +88,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		qubes_debian_installer.pro qubesinstallhelper.h \
 		qubespkg.h main.cpp \
 		qubesinstallhelper.cpp \
+		debiancontrolfile.cpp \
 		qubespkg.cpp
 QMAKE_TARGET  = qubes_debian_installer
 DESTDIR       = 
