@@ -10,7 +10,7 @@ using namespace std;
 const char* githubUrl="https://github.com/QubesOS/{0}/archive/refs/heads/master.zip";
 const char* githubPersUrl="https://github.com/faerbersteve/{0}/archive/refs/heads/master.zip";
 const char* debPkgBuildCmd="dpkg-buildpackage -uc -b";
-const char* debPkgEnd="-1_amd64.deb";
+const char* debPkgEnd="_amd64.deb";
 
 inline bool file_exists (const std::string& name) {
     struct stat buffer;
@@ -239,6 +239,11 @@ int qubesPkg::installPkg(std::string pkg)
     int ret{0};
 
     pkgFile="./"+pkg+"_"+packageVersion+debPkgEnd;
+
+    if (!file_exists(pkgFile))
+    {    
+        pkgFile="./"+pkg+"_"+packageVersion+"-1"+debPkgEnd;
+    }
 
     if (file_exists(pkgFile))
     {
