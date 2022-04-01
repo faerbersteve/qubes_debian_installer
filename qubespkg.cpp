@@ -238,7 +238,7 @@ int qubesPkg::installPkg(std::string pkg)
     std::string cmd{};
     int ret{0};
 
-    pkgFile="./"+projectName+"/"+pkg+"_"+packageVersion+debPkgEnd;
+    pkgFile="./"+pkg+"_"+packageVersion+debPkgEnd;
 
     if (file_exists(pkgFile))
     {
