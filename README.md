@@ -14,8 +14,13 @@ Get qubes running on a debian/ubuntu dom0
 
 ## Usage
 
-Download project, open it with QtCreator and run it
+Download project, run make and execute it
 
+Currently it creates the basic packages for installing qubes manager.
+Qubes Manager starts after solving the issues mentioned below.
+It is not functional yet, but hopefully soon.
+
+![alt text](https://github.com/faerbersteve/qubes_debian_installer/blob/42d0d2dbbef65314cd6372376029570397b4dd36/proof.png)
 If dependency issues appear please try to install them manually to get further
 
 Developed & tested on Ubuntu 21.10
@@ -23,13 +28,8 @@ Developed & tested on Ubuntu 21.10
 ## Issues
 
 Known issues:
-  - dependencies needs to be installed manually to met requirements to build the package
-  
-  - qubes-core-admin is missing debian files, fixed in this [repo](https://github.com/faerbersteve/qubes-core-admin)
-  - qubes-core-admin-client fails because of issue with sphinx `Sphinx error:
-Undocumented arguments for command 'qvm-template': '--keep-cache, --verbose, -q, -v'`, fixed in this [repo](https://github.com/faerbersteve/qubes-core-admin-client)
-  
-   - qubes-gui-agent-linux fails with error: dh_install: warning: Cannot find (any matches for) "etc/xdg/Trolltech.conf" (tried in ., debian/tmp)
+  - qubes-qubesdb-dom0 service is missing when installing
+  - dependencies missing when installing qubes-core-dom0
 
 
 ## Contribution
