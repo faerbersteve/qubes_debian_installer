@@ -221,9 +221,17 @@ int qubesPkg::readVersion()
 
 void qubesPkg::init()
 {
+    std:string numpy="python3-numpy";
+    
     runCmd("mkdir -p output && chmod 777 output");
 
     chdir("output");
+    
+    //fix for missing python3-numpy
+    if (!isPackageInstalled(numpy))
+    {
+       installPkgAPT(numpy);
+    }
 }
 
 
