@@ -47,10 +47,10 @@ private:
     std::vector<std::string> installedPkg{};
 
     int installPkg(std::string pkg);
-    int installPkgAPT(std::string pkg);
+    static int installPkgAPT(std::string pkg);
     int removePkg(std::string pkg);
 
-    int isPackageInstalled(std::string p);
+    static int isPackageInstalled(std::string p);
 
     int removeFolder();
 
