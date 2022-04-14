@@ -248,6 +248,12 @@ int qubesPkg::readVersion()
                         tmpStr=tmpStr.substr(7);
                     }
 
+                    if (tmpStr.find("dev_")==0)
+                    {
+                        //remove dev
+                        tmpStr=tmpStr.substr(4);
+                    }
+                    
                     //cut before - or _
                     if (tmpStr.find("-")!= std::string::npos)
                         pos=tmpStr.find("-");
