@@ -17,8 +17,7 @@ class qubesPkg
 public:
 
     qubesPkg(std::string projName);
-    qubesPkg(std::string projName, bool ignoreDep);
-    qubesPkg(std::string projName, bool ignoreDep, bool usePersonalRepo);
+    qubesPkg(std::string projName, bool usePersonalRepo);
 
     int download();
 
@@ -36,7 +35,6 @@ public:
 
     static void initForCreate();
 
-    bool ignoreDependencies{false};
     bool usePersonalRepo{false};
     std::string projectName{};
 private:

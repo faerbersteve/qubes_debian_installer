@@ -23,15 +23,10 @@ qubesPkg::qubesPkg(std::string projName): qubesPkg(projName,false)
 {
 }
 
-qubesPkg::qubesPkg(std::string projName, bool ignoreDep) : qubesPkg(projName,ignoreDep,false)
-{
-}
-
-qubesPkg::qubesPkg(std::string projName, bool ignoreDep, bool usePersonalRepo)
+qubesPkg::qubesPkg(std::string projName, bool usePersonalRepo)
 {
     projectName=projName;
 
-    ignoreDependencies=ignoreDep;
     this->usePersonalRepo=usePersonalRepo;
 
     getProjectUrl();
@@ -161,8 +156,8 @@ int qubesPkg::createPackage()
 
     cmd="cd " + projectName + " && " + debPkgBuildCmd;
 
-    if (ignoreDependencies)
-        cmd+=" -d";
+//    if (ignoreDependencies)
+//        cmd+=" -d";
 
     ret=runCmd(cmd);
 

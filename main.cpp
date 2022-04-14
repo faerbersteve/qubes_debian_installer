@@ -19,11 +19,12 @@ std::vector<qubesPkg*> getPackages()
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-core-qubesdb");
+    qPack=new qubesPkg("qubes-core-qubesdb",true);
     qPack->addPackageName("qubesdb-dev", PkgInstallFlag::FOR_DEV);
     qPack->addPackageName("libqubesdb", PkgInstallFlag::ALL);
     qPack->addPackageName("python3-qubesdb", PkgInstallFlag::ALL);
     qPack->addPackageName("qubesdb", PkgInstallFlag::ALL);
+    qPack->addPackageName("qubesdb-dom0", PkgInstallFlag::FOR_PROD);
     qPack->addPackageName("qubesdb-vm", PkgInstallFlag::IGNORE);
 
     packages.push_back(qPack);
@@ -41,7 +42,7 @@ std::vector<qubesPkg*> getPackages()
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-core-admin",false,true); //no debian files in qubes github repo
+    qPack=new qubesPkg("qubes-core-admin",true); //no debian files in qubes github repo
     qPack->addPackageName("qubes-core-dom0", PkgInstallFlag::FOR_PROD);
 
     packages.push_back(qPack);
@@ -71,12 +72,12 @@ std::vector<qubesPkg*> getPackages()
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-gui-agent-linux", false,true); //issue with missing Trolltech.conf
+    qPack=new qubesPkg("qubes-gui-agent-linux", true); //issue with missing Trolltech.conf
 
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-core-admin-client",false,true); //sphinxdoc throws error
+    qPack=new qubesPkg("qubes-core-admin-client",true); //sphinxdoc throws error
     qPack->addPackageName("python3-qubesadmin", PkgInstallFlag::FOR_PROD);
     qPack->addPackageName("qubes-core-admin-client", PkgInstallFlag::FOR_PROD);
 
