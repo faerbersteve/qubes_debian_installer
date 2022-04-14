@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <dirent.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include "qubespkg.h"
@@ -11,6 +12,7 @@ const char* githubUrl="https://github.com/QubesOS/{0}/archive/refs/heads/master.
 const char* githubPersUrl="https://github.com/faerbersteve/{0}/archive/refs/heads/master.zip";
 const char* debPkgBuildCmd="dpkg-buildpackage -uc -b";
 const char* debPkgEnd="_amd64.deb";
+const char* debPkgEndAll="_all.deb";
 
 inline bool file_exists (const std::string& name) {
     struct stat buffer;
@@ -209,19 +211,74 @@ void qubesPkg::cleanUp()
 int qubesPkg::readVersion()
 {
     std::string fileName= "./"+ projectName+"/version";
-    ifstream f(fileName, std::ifstream::in);
 
-    std::getline(f, packageVersion);
+    if (file_exists(fileName))
+    {
+        //can read from version file
+        ifstream f(fileName, std::ifstream::in);
 
-    f.close();
+        std::getline(f, packageVersion);
+
+        f.close();
+    }
+    else
+    {
+        //need to find in folder
+        DIR *d;
+        struct dirent *dir;
+        std::string pkgName1;
+        std::string tmpStr;
+        int pos{0};
+
+        pkgName1=packages.begin()->first;
+
+        d=opendir(".");
+
+        if (d)
+        {
+            while ((dir=readdir(d))!=NULL)
+            {
+                tmpStr=dir->d_name;
+
+                //cout << "current file " << dir->d_name<<endl;
+
+                if (tmpStr.find(pkgName1)==0)
+                {
+                    //found it
+                    tmpStr=tmpStr.substr(pkgName1.length()+1);
+
+                    if (tmpStr.find("dbgsym_")==0)
+                    {
+                        //remove dbgsym
+                        tmpStr=tmpStr.substr(7);
+                    }
+
+                    //cut before - or _
+                    if (tmpStr.find("-")!= std::string::npos)
+                        pos=tmpStr.find("-");
+                    else
+                        pos= tmpStr.find("_");
+
+                    tmpStr=tmpStr.substr(0,pos);
+
+                    packageVersion=tmpStr;
+                    break;
+                }
+            }
+            closedir(d);
+        }
+    }
+
+    if (packageVersion.length()==0)
+        return 1;
 
     cout << "Package version is " << packageVersion << endl;
     return 0;
 }
 
-void qubesPkg::init()
+void qubesPkg::initForCreate()
 {
-    std:string numpy="python3-numpy";
+    std::string numpy="python3-numpy";
     
     runCmd("mkdir -p output && chmod 777 output");
 
@@ -230,7 +287,7 @@ void qubesPkg::init()
     //fix for missing python3-numpy
     if (!isPackageInstalled(numpy))
     {
-       installPkgAPT(numpy);
+        installPkgAPT(numpy);
     }
 }
 
@@ -249,8 +306,29 @@ int qubesPkg::installPkg(std::string pkg)
     pkgFile="./"+pkg+"_"+packageVersion+debPkgEnd;
 
     if (!file_exists(pkgFile))
-    {    
+    {
         pkgFile="./"+pkg+"_"+packageVersion+"-1"+debPkgEnd;
+    }
+
+    if (!file_exists(pkgFile))
+    {
+        pkgFile="./"+pkg+"_"+packageVersion+"-2"+debPkgEnd;
+    }
+
+    if (!file_exists(pkgFile))
+    {
+        //try all deb file
+        pkgFile="./"+pkg+"_"+packageVersion+debPkgEndAll;
+    }
+
+    if (!file_exists(pkgFile))
+    {
+        pkgFile="./"+pkg+"_"+packageVersion+"-1"+debPkgEndAll;
+    }
+
+    if (!file_exists(pkgFile))
+    {
+        pkgFile="./"+pkg+"_"+packageVersion+"-2"+debPkgEndAll;
     }
 
     if (file_exists(pkgFile))

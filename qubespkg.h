@@ -34,7 +34,7 @@ public:
 
     int readVersion();
 
-    static void init();
+    static void initForCreate();
 
     bool ignoreDependencies{false};
     bool usePersonalRepo{false};

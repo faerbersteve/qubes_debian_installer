@@ -3,6 +3,7 @@
 #include <string>
 #include "qubespkg.h"
 #include "debiancontrolfile.h"
+#include "qubesinstallhelper.h"
 
 using namespace std;
 
@@ -48,7 +49,7 @@ std::vector<qubesPkg*> getPackages()
     qPack=new qubesPkg("qubes-linux-utils");
     qPack->addPackageName("python3-qubesimgconverter", PkgInstallFlag::ALL);
     qPack->addPackageName("qubes-utils", PkgInstallFlag::FOR_PROD);
-    qPack->addPackageName("qubes-kernel-vm-support", PkgInstallFlag::FOR_PROD);
+    qPack->addPackageName("qubes-kernel-vm-support", PkgInstallFlag::IGNORE);
     qPack->addPackageName("libqubes-rpc-filecopy2", PkgInstallFlag::ALL);
     qPack->addPackageName("libqubes-rpc-filecopy-dev", PkgInstallFlag::FOR_DEV);
 
@@ -112,6 +113,7 @@ std::vector<qubesPkg*> getPackages()
 int main()
 {
     std::vector<qubesPkg*> packages{};
+    qubesInstallHelper* helper=nullptr;
     char choice{};
     int ret{0};
     bool hasError{false};
@@ -131,7 +133,7 @@ int main()
     {
         cout << "starting with downloading and creating deb packages..." << endl;
 
-        qubesPkg::init();
+        qubesPkg::initForCreate();
 
         for(auto p :packages)
         {
@@ -196,6 +198,9 @@ int main()
     {
         cout << "starting with installation..." << endl;
 
+        helper=new qubesInstallHelper(packages);
+
+        helper->install();
     }
 
 
