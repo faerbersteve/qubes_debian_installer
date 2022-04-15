@@ -20,8 +20,8 @@ qubesInstallHelper::qubesInstallHelper(std::vector<qubesPkg *> p,std::string f)
 
 void qubesInstallHelper::install()
 {
-    qubesPkg* pkg=nullptr;
     int ret=0;
+
 
     if (!file_exists(folder))
     {
@@ -31,10 +31,28 @@ void qubesInstallHelper::install()
 
     chdir(folder.c_str());
 
+    //prepare host
+    cout << "Prepare host.." << endl;
+
+    runCmd("mkdir -p /run/qubes");
+    runCmd("chmod 777 -R /run/qubes");
+    runCmd("mkdir -p /var/log/qubes");
+    runCmd("chmod 777 -R /var/log/qubes");
+
     //check for xen
+
     //activate xen
+    cout << "Activate xen..." << endl;
+
+    runCmd("modprobe xen-gntalloc");
+    runCmd("modprobe xen-gntdev");
+    runCmd("modprobe xen-evtchn");
+
+    runCmd("chmod 777 -R /dev/xen");
 
     //start install
+    cout << "Start installation.." << endl;
+
     for(auto p : packages)
     {
         ret=p->readVersion();
@@ -57,7 +75,7 @@ void qubesInstallHelper::install()
 
         installMissing();
 
-     cin.get();
+        cin.get();
     }
 }
 

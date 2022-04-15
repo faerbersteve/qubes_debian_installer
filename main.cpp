@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <unistd.h>
 #include "qubespkg.h"
 #include "debiancontrolfile.h"
 #include "qubesinstallhelper.h"
@@ -73,7 +74,7 @@ std::vector<qubesPkg*> getPackages()
     packages.push_back(qPack);
 
     qPack=new qubesPkg("qubes-gui-agent-linux", true); //issue with missing Trolltech.conf
-
+    qPack->addPackageName("qubes-gui-agent", PkgInstallFlag::IGNORE);
 
     packages.push_back(qPack);
 
@@ -98,13 +99,18 @@ std::vector<qubesPkg*> getPackages()
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-manager"); //has qubes-python-qasync dependency
-
+    qPack=new qubesPkg("qubes-desktop-linux-common");
+    qPack->addPackageName("qubes-desktop-linux-common", PkgInstallFlag::FOR_PROD);
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-desktop-linux-common");
+    qPack=new qubesPkg("qubes-linux-kernel");
+    qPack->addPackageName("kernel-latest-qubes-vm", PkgInstallFlag::FOR_PROD);
 
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-manager"); //has qubes-python-qasync dependency
+    qPack->addPackageName("qubes-manager", PkgInstallFlag::FOR_PROD);
 
     packages.push_back(qPack);
 
@@ -121,6 +127,12 @@ int main()
     bool installQubes{true};
 
     cout << "---Qubes debian/ubuntu package creator & installer---" << endl;
+
+    if (getuid()!=0)
+    {
+        cout << "This app needs to run as root." << endl;
+        return -2;
+    }
 
     cout << "deb files will be created in the output folder" << endl;
 

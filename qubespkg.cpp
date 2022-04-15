@@ -8,6 +8,7 @@
 
 using namespace std;
 
+const char* vmKernelDownload="https://ftp.qubes-os.org/repo/yum/r4.1/current/dom0/fc32/rpm/kernel-latest-qubes-vm-5.16.13-2.fc32.qubes.x86_64.rpm";
 const char* githubUrl="https://github.com/QubesOS/{0}/archive/refs/heads/master.zip";
 const char* githubPersUrl="https://github.com/faerbersteve/{0}/archive/refs/heads/master.zip";
 const char* debPkgBuildCmd="dpkg-buildpackage -uc -b";
@@ -136,6 +137,21 @@ int qubesPkg::createPackage()
         ret=runCmd(cmd);
     }
 
+    if (projectName=="qubes-linux-kernel")
+    {
+        //convert existing package
+        cmd="cd " + projectName + " && wget -c " + vmKernelDownload;
+
+        if (!isPackageInstalled("alien"))
+        {
+            installPkgAPT("alien");
+        }
+
+        //convert package
+        runCmd("alien -d --scripts ./" + projectName+ "/kernel-latest-qubes-vm-5.16.13-2.fc32.qubes.x86_64.rpm");
+
+    }
+
     //check for dependencies
     debianControlFile dcf("./"+projectName +"/debian/control");
 
@@ -156,8 +172,8 @@ int qubesPkg::createPackage()
 
     cmd="cd " + projectName + " && " + debPkgBuildCmd;
 
-//    if (ignoreDependencies)
-//        cmd+=" -d";
+    //    if (ignoreDependencies)
+    //        cmd+=" -d";
 
     ret=runCmd(cmd);
 
@@ -308,28 +324,24 @@ int qubesPkg::installPkg(std::string pkg)
 
     if (!file_exists(pkgFile))
     {
-        pkgFile="./"+pkg+"_"+packageVersion+"-1"+debPkgEnd;
-    }
-
-    if (!file_exists(pkgFile))
-    {
-        pkgFile="./"+pkg+"_"+packageVersion+"-2"+debPkgEnd;
-    }
-
-    if (!file_exists(pkgFile))
-    {
         //try all deb file
         pkgFile="./"+pkg+"_"+packageVersion+debPkgEndAll;
     }
 
     if (!file_exists(pkgFile))
     {
-        pkgFile="./"+pkg+"_"+packageVersion+"-1"+debPkgEndAll;
-    }
+        for(int i=1;i <9;i++)
+        {
+            pkgFile="./"+pkg+"_"+packageVersion+"-"+ std::to_string(i)+debPkgEnd;
 
-    if (!file_exists(pkgFile))
-    {
-        pkgFile="./"+pkg+"_"+packageVersion+"-2"+debPkgEndAll;
+            if (file_exists(pkgFile))
+                break;
+
+            pkgFile="./"+pkg+"_"+packageVersion+"-"+ std::to_string(i)+debPkgEndAll;
+
+            if (file_exists(pkgFile))
+                break;
+        }
     }
 
     if (file_exists(pkgFile))
