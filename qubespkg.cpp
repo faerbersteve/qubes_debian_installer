@@ -8,7 +8,8 @@
 
 using namespace std;
 
-const char* vmKernelDownload="https://ftp.qubes-os.org/repo/yum/r4.1/current/dom0/fc32/rpm/kernel-latest-qubes-vm-5.16.13-2.fc32.qubes.x86_64.rpm";
+const char* vmKernelPackage="kernel-latest-qubes-vm-5.16.13-2.fc32.qubes.x86_64.rpm";
+const char* vmKernelDownload="https://ftp.qubes-os.org/repo/yum/r4.1/current/dom0/fc32/rpm/";
 const char* githubUrl="https://github.com/QubesOS/{0}/archive/refs/heads/master.zip";
 const char* githubPersUrl="https://github.com/faerbersteve/{0}/archive/refs/heads/master.zip";
 const char* debPkgBuildCmd="dpkg-buildpackage -uc -b";
@@ -140,16 +141,27 @@ int qubesPkg::createPackage()
     if (projectName=="qubes-linux-kernel")
     {
         //convert existing package
-        cmd="cd " + projectName + " && wget -c " + vmKernelDownload;
-
         if (!isPackageInstalled("alien"))
         {
             installPkgAPT("alien");
         }
 
-        //convert package
-        runCmd("alien -d --scripts ./" + projectName+ "/kernel-latest-qubes-vm-5.16.13-2.fc32.qubes.x86_64.rpm");
+        cout << "Download vm kernel package (faster way)" << endl;
 
+        cmd="cd " + projectName + " && wget -c " + vmKernelDownload+vmKernelPackage;
+
+        ret =runCmd(cmd);
+
+        if (ret!=0)
+        {
+            cout << "error while downloading package..." << endl;
+            return -1;
+        }
+
+        //convert package
+        runCmd("alien -d --scripts ./" + projectName+ "/" + vmKernelPackage);
+
+        return 0;
     }
 
     //check for dependencies
