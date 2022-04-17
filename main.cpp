@@ -43,17 +43,27 @@ std::vector<qubesPkg*> getPackages()
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-core-admin",true); //no debian files in qubes github repo
-    qPack->addPackageName("qubes-core-dom0", PkgInstallFlag::FOR_PROD);
-
-    packages.push_back(qPack);
-
     qPack=new qubesPkg("qubes-linux-utils");
     qPack->addPackageName("python3-qubesimgconverter", PkgInstallFlag::ALL);
     qPack->addPackageName("qubes-utils", PkgInstallFlag::FOR_PROD);
     qPack->addPackageName("qubes-kernel-vm-support", PkgInstallFlag::IGNORE);
     qPack->addPackageName("libqubes-rpc-filecopy2", PkgInstallFlag::ALL);
     qPack->addPackageName("libqubes-rpc-filecopy-dev", PkgInstallFlag::FOR_DEV);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-linux-kernel");
+    qPack->addPackageName("kernel-latest-qubes-vm", PkgInstallFlag::FOR_PROD);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-core-agent-linux");
+    qPack->addPackageName("qubes-core-agent-dom0-updates", PkgInstallFlag::FOR_PROD);
+
+    packages.push_back(qPack);
+
+    qPack=new qubesPkg("qubes-core-admin",true); //no debian files in qubes github repo
+    qPack->addPackageName("qubes-core-dom0", PkgInstallFlag::FOR_PROD);
 
     packages.push_back(qPack);
 
@@ -101,11 +111,6 @@ std::vector<qubesPkg*> getPackages()
 
     qPack=new qubesPkg("qubes-desktop-linux-common");
     qPack->addPackageName("qubes-desktop-linux-common", PkgInstallFlag::FOR_PROD);
-
-    packages.push_back(qPack);
-
-    qPack=new qubesPkg("qubes-linux-kernel");
-    qPack->addPackageName("kernel-latest-qubes-vm", PkgInstallFlag::FOR_PROD);
 
     packages.push_back(qPack);
 
