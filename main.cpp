@@ -30,10 +30,11 @@ std::vector<qubesPkg*> getPackages()
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-core-qrexec");
+    qPack=new qubesPkg("qubes-core-qrexec",true);
     qPack->addPackageName("libqrexec-utils2", PkgInstallFlag::ALL);
     qPack->addPackageName("libqrexec-utils-dev", PkgInstallFlag::FOR_DEV);
     qPack->addPackageName("qubes-core-qrexec", PkgInstallFlag::FOR_PROD);
+    qPack->addPackageName("qubes-core-qrexec-dom0", PkgInstallFlag::FOR_PROD);
     qPack->addPackageName("python3-qrexec", PkgInstallFlag::FOR_PROD);
 
     packages.push_back(qPack);
