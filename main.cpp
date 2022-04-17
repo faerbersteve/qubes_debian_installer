@@ -57,7 +57,7 @@ std::vector<qubesPkg*> getPackages()
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-core-agent-linux");
+    qPack=new qubesPkg("qubes-core-agent-linux",true);
     qPack->addPackageName("qubes-core-agent-dom0-updates", PkgInstallFlag::FOR_PROD);
 
     packages.push_back(qPack);
