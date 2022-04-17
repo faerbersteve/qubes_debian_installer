@@ -21,7 +21,7 @@ qubesInstallHelper::qubesInstallHelper(std::vector<qubesPkg *> p,std::string f)
 void qubesInstallHelper::install()
 {
     int ret=0;
-
+    bool hasError{false};
 
     if (!file_exists(folder))
     {
@@ -60,6 +60,7 @@ void qubesInstallHelper::install()
         if (ret!=0)
         {
             cout << "Error while reading version of project " << p->projectName << endl;
+            hasError=true;
             break;
         }
 
@@ -70,12 +71,25 @@ void qubesInstallHelper::install()
         if (ret!=0)
         {
             cout << "Error while installing project " << p->projectName << endl;
+            hasError=true;
             break;
         }
 
-        installMissing();
+        ret=installMissing();
+
+        if (ret!=0)
+        {
+            cout << "Error while fixing apt, installing project " << p->projectName << endl;
+            hasError=true;
+            break;
+        }
 
         cin.get();
+    }
+
+    if (hasError)
+    {
+        cout << "Installation failed with error" << endl;
     }
 }
 
