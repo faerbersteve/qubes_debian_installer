@@ -34,6 +34,8 @@ void qubesInstallHelper::install()
     //prepare host
     cout << "Prepare host.." << endl;
 
+    runCmd("hostnamectl set-hostname dom0");
+
     runCmd("mkdir -p /run/qubes");
     runCmd("chmod 777 -R /run/qubes");
     runCmd("mkdir -p /var/log/qubes");
@@ -49,6 +51,8 @@ void qubesInstallHelper::install()
     runCmd("modprobe xen-evtchn");
 
     runCmd("chmod 777 -R /dev/xen");
+
+    writeModuleLoadConf();
 
     //start install
     cout << "Start installation.." << endl;
@@ -111,4 +115,19 @@ int qubesInstallHelper::installMissing()
 int qubesInstallHelper::runCmd(string cmd)
 {
     return system(cmd.c_str());
+}
+
+void qubesInstallHelper::writeModuleLoadConf()
+{
+    fstream of("/usr/lib/modules-load.d/xen.conf",std::fstream::out);
+
+    of << "xen-evtchn" << endl;
+    of << "xen-gntdev" << endl;
+    of << "xen-gntalloc" << endl;
+    of << "xen-blkback" << endl;
+    of << "xen-pciback" << endl;
+    of << "xen-privcmd" << endl;
+    of << "xen-acpi-processor" << endl;
+
+    of.close();
 }

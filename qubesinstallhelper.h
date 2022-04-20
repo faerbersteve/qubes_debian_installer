@@ -10,6 +10,7 @@ public:
 
     void install();
 
+    void writeModuleLoadConf();
 private:
     std::vector<qubesPkg*> packages;
     std::string folder{"output"};
@@ -19,6 +20,7 @@ private:
     int installMissing();
 
     static int runCmd(std::string cmd);
+
 };
 
 #endif // QUBESINSTALLHELPER_H
