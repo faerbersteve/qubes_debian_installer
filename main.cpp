@@ -123,33 +123,77 @@ std::vector<qubesPkg*> getPackages()
     return packages;
 }
 
-int main()
+int main(int argc, char** argv)
 {
     std::vector<qubesPkg*> packages{};
     qubesInstallHelper* helper=nullptr;
-    char choice{};
+    std::string arg{};
     int ret{0};
     bool hasError{false};
-    bool installQubes{true};
+    bool createPackages{false};
+    bool installQubes{false};
+    bool showHelp{true};
+    bool noRoot{false};
+    bool debug{false};
 
     cout << "---Qubes debian/ubuntu package creator & installer---" << endl;
 
-    if (getuid()!=0)
+    if (argc<=1)
+        showHelp=true;
+    else
+    {
+        for(int i=1; i <argc; ++i)
+        {
+            arg=argv[i];
+
+            if (arg=="-create")
+            {
+                createPackages=true;
+                showHelp=false;
+            }
+            else if (arg=="-install")
+            {
+                installQubes=true;
+                showHelp=false;
+            }
+            else if (arg=="-noroot")
+            {
+                noRoot=true;
+            }
+            else if (arg=="-help")
+            {
+                showHelp=true;
+                break;
+            }
+            else if (arg=="-debug")
+            {
+                debug=true;
+            }
+        }
+    }
+
+    if (showHelp)
+    {
+        cout << "Possible args:" << endl;
+        cout << "-create    create the debian packages" << endl;
+        cout << "-install   install qubes with the debian packages" << endl;
+        cout << "-noroot    ignore missing root privileges" << endl;
+
+        return 0;
+    }
+
+    if (!noRoot && getuid()!=0)
     {
         cout << "This app needs to run as root." << endl;
         return -2;
     }
 
-    cout << "deb files will be created in the output folder" << endl;
-
-    cout << "Do you want to create or install the deb packages? (c/i)" << endl;
-
-    choice= getchar();
-
     packages=getPackages();
 
-    if (choice =='c' || choice=='C')
+    if (createPackages)
     {
+        cout << "deb files will be created in the output folder" << endl;
+
         cout << "starting with downloading and creating deb packages..." << endl;
 
         qubesPkg::initForCreate();
@@ -182,6 +226,13 @@ int main()
                 hasError=true;
                 break;
             }
+
+            if (debug)
+            {
+                cout << "press key to continue with next package"<<endl;
+
+                cin.get();
+            }
         }
 
         if (hasError)
@@ -198,19 +249,6 @@ int main()
         }
 
         cout << "Created all packages, ready for install" << endl;
-        cout << "Do you want to continue and install the packages? (y/n)" << endl;
-
-        choice= getchar();
-
-        if (!(choice =='y' || choice=='Y'))
-        {
-            //stop
-            installQubes=false;
-        }
-    }
-    else
-    {
-        cout << "skip creation of debian packages..." << endl;
     }
 
     if (installQubes)
@@ -219,12 +257,17 @@ int main()
 
         helper=new qubesInstallHelper(packages);
 
+        helper->debug=debug;
         helper->install();
+
+        cout << endl << "installation finished, please reboot" << endl;
+    }
+    else
+    {
+        cout << endl << "reached end of programm..." << endl;
     }
 
+    getchar();
 
-    cout << "reached end of programm..." << endl;
-    getchar();
-    getchar();
     return 0;
 }

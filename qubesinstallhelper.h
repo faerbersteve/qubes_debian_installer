@@ -8,6 +8,8 @@ class qubesInstallHelper
 public:
     qubesInstallHelper(std::vector<qubesPkg*> packages,std::string folder="output");
 
+    bool debug{false};
+
     void install();
 
     void writeModuleLoadConf();

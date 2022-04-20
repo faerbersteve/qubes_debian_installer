@@ -88,7 +88,12 @@ void qubesInstallHelper::install()
             break;
         }
 
-        cin.get();
+        if (debug)
+        {
+            cout << "press key to continue with next package"<<endl;
+
+            cin.get();
+        }
     }
 
     if (hasError)
