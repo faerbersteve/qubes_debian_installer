@@ -17,12 +17,12 @@ getcode() {
 	git pull
 }
 
-if [[ $(command -v qmake-qt5) ]];
+if [[ $(command -v qmake) ]];
 then
-	echo "found qmake-qt5" 
+	echo "found qmake" 
 else
-	echo "qmake-qt5 not found, install needed packages for building"
-	sudo apt update && apt install -y git make qtbase5-dev g++
+	echo "qmake not found, install needed packages for building"
+	sudo apt update && sudo apt install -y git make qtbase5-dev g++
 fi
 
 cd ~
@@ -38,6 +38,8 @@ cd Projects
 set -e
 
 getcode 'qubes_debian_installer' 
+
+cd ~/Projects
 
 rm -rf build-qubes-debian-installer
 
