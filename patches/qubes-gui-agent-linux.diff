@@ -14,3 +14,38 @@ diff -urN a/Makefile qubes-gui-agent-linux/Makefile
  	install -m 0644 -D appvm-scripts/qubes-gui-vm.gschema.override \
  		$(DESTDIR)$(DATADIR)/glib-2.0/schemas/20_qubes-gui-vm.gschema.override
  	install -d $(DESTDIR)/etc/qubes-rpc
+diff -urN a/get-latest-pulsecore.sh qubes-gui-agent-linux/get-latest-pulsecore.sh
+--- a/get-latest-pulsecore.sh	2023-03-09 15:45:21.053736000 -0300
++++ qubes-gui-agent-linux/get-latest-pulsecore.sh	2023-03-09 15:43:43.978605000 -0300
+@@ -17,20 +17,21 @@
+ 
+ if [ ! -d "$BUILDERDIR" ]; then
+     echo "Cannot find qubes-builder-rpm. Exiting..."
+-    exit 1
++    #exit 1
+ fi
+ 
+ REPO_URL=https://gitlab.freedesktop.org/pulseaudio/pulseaudio.git
+ 
+ LATEST_REPO_VERSION="$(git ls-remote --exit-code --refs --tags --sort="v:refname" "$REPO_URL" '*.*' | tail -n1 | cut -d/ -f3 | sed 's/^v//')"
++NEEDED_REPO_VERSION="$(pkg-config --modversion libpulse | cut -d "-" -f 1 || echo 0.0)"
+ LATEST_QUBES_VERSION="$(find "$LOCALDIR/pulse" -type d -name "pulsecore-*" | sed "s|$LOCALDIR/pulse/pulsecore-||" | sort -g | tail -1)"
+ 
+ trap 'exit_updater' 0 1 2 3 6 15
+ 
+-if [ "${LATEST_QUBES_VERSION}" != "${LATEST_REPO_VERSION}" ] && [ ! -e "$LOCALDIR/pulse/pulsecore-${LATEST_REPO_VERSION}" ]; then
++if [ "${LATEST_QUBES_VERSION}" != "${NEEDED_REPO_VERSION}" ] && [ ! -e "$LOCALDIR/pulse/pulsecore-${NEEDED_REPO_VERSION}" ]; then
+     cd "$TMPDIR"
+ 
+-    git clone --depth 1 --branch "v$LATEST_REPO_VERSION" "$REPO_URL" .
++    git clone --depth 1 --branch "v$NEEDED_REPO_VERSION" "$REPO_URL" .
+ 
+     # Import keys of repo taggers
+     for key in \
+@@ -50,5 +51,5 @@
+     find "src/pulsecore" -type f ! -regex '.*\.h$' -exec rm -f {} \;
+ 
+     # copy to qubes-gui-agent
+-    cp -r "src/pulsecore" "$LOCALDIR/pulse/pulsecore-$LATEST_REPO_VERSION"
++    cp -r "src/pulsecore" "$LOCALDIR/pulse/pulsecore-$NEEDED_REPO_VERSION"
+ fi

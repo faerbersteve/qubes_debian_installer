@@ -153,6 +153,13 @@ int qubesPkg::createPackage()
         ret=runCmd(cmd);
     }
 
+    if (projectName=="qubes-gui-agent-linux")
+    {
+    	cout << "Download pulsecore" << endl;
+        cmd="cd " + projectName + " && ./get-latest-pulsecore.sh"
+        ret=runCmd(cmd);
+    }
+    
     if (projectName=="qubes-linux-kernel")
     {
         //convert existing package

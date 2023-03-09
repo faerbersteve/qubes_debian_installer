@@ -37,7 +37,7 @@ diff -urN a/debian/control qubes-core-qrexec/debian/control
 diff -urN a/debian/qubes-core-qrexec-dom0.install qubes-core-qrexec/debian/qubes-core-qrexec-dom0.install
 --- a/debian/qubes-core-qrexec-dom0.install	1969-12-31 21:00:00.000000000 -0300
 +++ qubes-core-qrexec/debian/qubes-core-qrexec-dom0.install	2023-03-09 12:40:03.439837353 -0300
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,21 @@
 +etc/qubes/policy.d/README
 +etc/qubes/policy.d/35-compat.policy
 +etc/qubes/policy.d/90-admin-policy-default.policy
@@ -48,6 +48,7 @@ diff -urN a/debian/qubes-core-qrexec-dom0.install qubes-core-qrexec/debian/qubes
 +etc/qubes-rpc/qubes.WaitForSession
 +etc/qubes-rpc/policy.List
 +etc/qubes-rpc/policy.Get
++etc/qubes-rpc/policy.GetFiles
 +etc/qubes-rpc/policy.Replace
 +etc/qubes-rpc/policy.Remove
 +etc/qubes-rpc/policy.include.List
