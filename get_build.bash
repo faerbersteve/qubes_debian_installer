@@ -52,5 +52,7 @@ qmake ../qubes_debian_installer/qubes_debian_installer.pro
 make -j$(nproc)
 
 mkdir -p ~/Desktop/qubes-debian-installer 
+mkdir -p ~/Desktop/qubes-debian-installer/patches 
  
 cp qubes_debian_installer ~/Desktop/qubes-debian-installer/
+cp ../qubes_debian_installer/patches/* ~/Desktop/qubes-debian-installer/patches/
