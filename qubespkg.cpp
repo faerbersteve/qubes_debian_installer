@@ -354,7 +354,7 @@ int qubesPkg::installPkg(std::string pkg)
         //try all deb file
         pkgFile="./"+pkg+"_"+packageVersion+debPkgEndAll;
     }
-
+ 
     if (!file_exists(pkgFile))
     {
         for(int i=1;i <9;i++)
@@ -365,6 +365,23 @@ int qubesPkg::installPkg(std::string pkg)
                 break;
 
             pkgFile="./"+pkg+"_"+packageVersion+"-"+ std::to_string(i)+debPkgEndAll;
+
+            if (file_exists(pkgFile))
+                break;
+        }
+    }
+    
+      //try 1 file, fix for libvchan-xen1
+      if (!file_exists(pkgFile))
+    {
+        for(int i=1;i <9;i++)
+        {
+            pkgFile="./"+pkg+"1_"+packageVersion+"-"+ std::to_string(i)+debPkgEnd;
+
+            if (file_exists(pkgFile))
+                break;
+
+            pkgFile="./"+pkg+"1_"+packageVersion+"-"+ std::to_string(i)+debPkgEndAll;
 
             if (file_exists(pkgFile))
                 break;
