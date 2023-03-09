@@ -20,7 +20,7 @@ std::vector<qubesPkg*> getPackages()
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-core-qubesdb",true);
+    qPack=new qubesPkg("qubes-core-qubesdb");
     qPack->addPackageName("qubesdb-dev", PkgInstallFlag::FOR_DEV);
     qPack->addPackageName("libqubesdb", PkgInstallFlag::ALL);
     qPack->addPackageName("python3-qubesdb", PkgInstallFlag::ALL);
@@ -30,7 +30,7 @@ std::vector<qubesPkg*> getPackages()
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-core-qrexec",true);
+    qPack=new qubesPkg("qubes-core-qrexec");
     qPack->addPackageName("libqrexec-utils2", PkgInstallFlag::ALL);
     qPack->addPackageName("libqrexec-utils-dev", PkgInstallFlag::FOR_DEV);
     qPack->addPackageName("qubes-core-qrexec", PkgInstallFlag::FOR_PROD);
@@ -58,12 +58,12 @@ std::vector<qubesPkg*> getPackages()
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-core-agent-linux",true);
+    qPack=new qubesPkg("qubes-core-agent-linux");
     qPack->addPackageName("qubes-core-agent-dom0-updates", PkgInstallFlag::FOR_PROD);
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-core-admin",true); //no debian files in qubes github repo
+    qPack=new qubesPkg("qubes-core-admin"); //no debian files in qubes github repo
     qPack->addPackageName("qubes-core-dom0", PkgInstallFlag::FOR_PROD);
 
     packages.push_back(qPack);
@@ -84,12 +84,12 @@ std::vector<qubesPkg*> getPackages()
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-gui-agent-linux", true); //issue with missing Trolltech.conf
+    qPack=new qubesPkg("qubes-gui-agent-linux"); //issue with missing Trolltech.conf
     qPack->addPackageName("qubes-gui-agent", PkgInstallFlag::IGNORE);
 
     packages.push_back(qPack);
 
-    qPack=new qubesPkg("qubes-core-admin-client",true); //sphinxdoc throws error
+    qPack=new qubesPkg("qubes-core-admin-client"); //sphinxdoc throws error
     qPack->addPackageName("python3-qubesadmin", PkgInstallFlag::FOR_PROD);
     qPack->addPackageName("qubes-core-admin-client", PkgInstallFlag::FOR_PROD);
 

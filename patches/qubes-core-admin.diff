@@ -1,0 +1,307 @@
+diff -urN qubes-core-admin/debian/changelog qubes-core-admin_n/debian/changelog
+--- qubes-core-admin/debian/changelog	1969-12-31 21:00:00.000000000 -0300
++++ qubes-core-admin_n/debian/changelog	2023-03-09 12:06:20.967053090 -0300
+@@ -0,0 +1,2 @@
++qubes-core-dom0 (4.1.26-2) experimental; urgency=low
++
+diff -urN qubes-core-admin/debian/compat qubes-core-admin_n/debian/compat
+--- qubes-core-admin/debian/compat	1969-12-31 21:00:00.000000000 -0300
++++ qubes-core-admin_n/debian/compat	2023-03-09 12:06:20.967053090 -0300
+@@ -0,0 +1 @@
++10
+diff -urN qubes-core-admin/debian/control qubes-core-admin_n/debian/control
+--- qubes-core-admin/debian/control	1969-12-31 21:00:00.000000000 -0300
++++ qubes-core-admin_n/debian/control	2023-03-09 12:06:20.967053090 -0300
+@@ -0,0 +1,25 @@
++Source: qubes-core-dom0
++Section: alien
++Priority: extra
++Build-Depends:
++ debhelper, 
++ pkg-config,
++ dh-python,
++ lsb-release,
++ python3-setuptools, 
++ python3-lxml,
++ python3-docutils,
++ python3-jinja2,
++Maintainer: ..
++
++Package: qubes-core-dom0
++Architecture: all
++Depends: ${shlibs:Depends},
++ ${python3:Depends},
++ python3-libvirt,
++ python3-lxml,
++ python3-jinja2,
++ python3-docutils,
++ python3-pyinotify
++Description: The Qubes core files (Dom0-side)
++ The Qubes core files for installation on Dom0. 
+diff -urN qubes-core-admin/debian/copyright qubes-core-admin_n/debian/copyright
+--- qubes-core-admin/debian/copyright	1969-12-31 21:00:00.000000000 -0300
++++ qubes-core-admin_n/debian/copyright	2023-03-09 12:06:20.967053090 -0300
+@@ -0,0 +1,21 @@
++Copyright: GPL
++
++Information from the binary package:
++Name        : qubes-core-dom0
++Version     : 4.1.26
++Release     : 1.fc32
++Architecture: noarch
++Install Date: (not installed)
++Group       : Qubes
++Size        : 3765439
++License     : GPL
++Signature   : RSA/SHA256, Sa 05 Mär 2022 03:29:05, Key ID 1848792f9e2795e9
++Source RPM  : qubes-core-dom0-4.1.26-1.fc32.src.rpm
++Build Date  : Fr 04 Mar 2022 21:00:00
++Build Host  : reproducible
++Vendor      : Invisible Things Lab
++URL         : http://www.qubes-os.org
++Summary     : The Qubes core files (Dom0-side)
++Description :
++The Qubes core files for installation on Dom0.
++
+diff -urN qubes-core-admin/debian/postinst qubes-core-admin_n/debian/postinst
+--- qubes-core-admin/debian/postinst	1969-12-31 21:00:00.000000000 -0300
++++ qubes-core-admin_n/debian/postinst	2023-03-09 12:06:20.967053090 -0300
+@@ -0,0 +1,63 @@
++#!/bin/bash
++# alien added permissions fixup code
++chown ':qubes' '/etc/qubes/backup'
++chown ':qubes' '/etc/qubes/policy.d/85-admin-backup-restore.policy'
++chown ':qubes' '/etc/qubes/policy.d/90-admin-default.policy'
++chown ':qubes' '/etc/qubes/policy.d/90-default.policy'
++chown ':qubes' '/etc/qubes/policy.d/include/admin-global-ro'
++chown ':qubes' '/etc/qubes/policy.d/include/admin-global-rwx'
++chown ':qubes' '/etc/qubes/policy.d/include/admin-local-ro'
++chown ':qubes' '/etc/qubes/policy.d/include/admin-local-rwx'
++chown ':qubes' '/etc/qubes/qmemman.conf'
++chown ':qubes' '/var/lib/qubes'
++chmod '2770' '/var/lib/qubes'
++chown ':qubes' '/var/lib/qubes/appvms'
++chmod '2770' '/var/lib/qubes/appvms'
++chown ':qubes' '/var/lib/qubes/backup'
++chmod '2770' '/var/lib/qubes/backup'
++chown ':qubes' '/var/lib/qubes/vm-kernels'
++chmod '2770' '/var/lib/qubes/vm-kernels'
++chown ':qubes' '/var/lib/qubes/vm-templates'
++chmod '2770' '/var/lib/qubes/vm-templates'
++chown ':qubes' '/var/log/qubes'
++chmod '2770' '/var/log/qubes'
++chown ':qubes' '/var/run/qubes'
++
++ 
++if [ $1 = "configure" ] && [ -x /usr/bin/systemctl ]; then 
++        # Initial installation 
++        /usr/bin/systemctl --no-reload preset qubes-core.service || : 
++fi 
++
++
++ 
++if [ $1 = "configure" ] && [ -x /usr/bin/systemctl ]; then 
++        # Initial installation 
++        /usr/bin/systemctl --no-reload preset qubes-qmemman.service || : 
++fi 
++
++
++ 
++if [ $1 = "configure" ] && [ -x /usr/bin/systemctl ]; then 
++        # Initial installation 
++        /usr/bin/systemctl --no-reload preset qubesd.service || : 
++fi 
++
++
++sed '/^autoballoon=/d;/^lockfile=/d' -i /etc/xen/xl.conf
++echo 'autoballoon=0' >> /etc/xen/xl.conf
++echo 'lockfile="/var/run/qubes/xl-lock"' >> /etc/xen/xl.conf
++
++if [ -e /etc/sysconfig/prelink ]; then
++sed 's/^PRELINKING\s*=.*/PRELINKING=no/' -i /etc/sysconfig/prelink
++fi
++
++# Conflicts with libxl stack, so disable it
++systemctl --no-reload disable xend.service >/dev/null 2>&1
++systemctl --no-reload disable xendomains.service >/dev/null 2>&1
++systemctl daemon-reload >/dev/null 2>&1 || :
++
++if ! [ -e /var/lib/qubes/qubes.xml ]; then
++#    echo "Initializing Qubes DB..."
++    umask 007; sg qubes -c 'qubes-create --offline-mode'
++fi
+diff -urN qubes-core-admin/debian/postrm qubes-core-admin_n/debian/postrm
+--- qubes-core-admin/debian/postrm	1969-12-31 21:00:00.000000000 -0300
++++ qubes-core-admin_n/debian/postrm	2023-03-09 12:06:20.967053090 -0300
+@@ -0,0 +1,25 @@
++#!/bin/bash
++
++ 
++
++
++ 
++if [ $1 = "upgrade" ] && [ -x /usr/bin/systemctl ]; then 
++        # Package upgrade, not uninstall 
++        /usr/bin/systemctl try-restart qubes-qmemman.service || : 
++fi 
++
++
++ 
++if [ $1 = "upgrade" ] && [ -x /usr/bin/systemctl ]; then 
++        # Package upgrade, not uninstall 
++        /usr/bin/systemctl try-restart qubesd.service || : 
++fi 
++
++
++if [ "$1" = "remove" ] ; then
++	# no more packages left
++    chgrp root /etc/xen
++    chmod 700 /etc/xen
++    groupdel qubes
++fi
+diff -urN qubes-core-admin/debian/preinst qubes-core-admin_n/debian/preinst
+--- qubes-core-admin/debian/preinst	1969-12-31 21:00:00.000000000 -0300
++++ qubes-core-admin_n/debian/preinst	2023-03-09 12:06:20.967053090 -0300
+@@ -0,0 +1,4 @@
++#!/bin/bash
++if ! grep -q ^qubes: /etc/group ; then
++		groupadd qubes
++fi
+\ No newline at end of file
+diff -urN qubes-core-admin/debian/prerm qubes-core-admin_n/debian/prerm
+--- qubes-core-admin/debian/prerm	1969-12-31 21:00:00.000000000 -0300
++++ qubes-core-admin_n/debian/prerm	2023-03-09 12:06:20.967053090 -0300
+@@ -0,0 +1,28 @@
++#!/bin/bash
++
++ 
++if [ $1 = "remove" ] && [ -x /usr/bin/systemctl ]; then 
++        # Package removal, not upgrade 
++        /usr/bin/systemctl --no-reload disable --now qubes-core.service || : 
++fi 
++
++
++ 
++if [ $1 = "remove" ] && [ -x /usr/bin/systemctl ]; then 
++        # Package removal, not upgrade 
++        /usr/bin/systemctl --no-reload disable --now qubes-qmemman.service || : 
++fi 
++
++
++ 
++if [ $1 = "remove" ] && [ -x /usr/bin/systemctl ]; then 
++        # Package removal, not upgrade 
++        /usr/bin/systemctl --no-reload disable --now qubesd.service || : 
++fi 
++
++
++if [ "$1" = "remove" ] ; then
++	# no more packages left
++    service qubes_netvm stop
++    service qubes_core stop
++fi
+diff -urN qubes-core-admin/debian/rules qubes-core-admin_n/debian/rules
+--- qubes-core-admin/debian/rules	1969-12-31 21:00:00.000000000 -0300
++++ qubes-core-admin_n/debian/rules	2023-03-09 12:06:20.967053090 -0300
+@@ -0,0 +1,37 @@
++#!/usr/bin/make -f
++# debian/rules for alien
++
++export PYBUILD_NAME = qubes
++
++export PYTHON_PREFIX_ARG=--install-layout=deb
++export BACKEND_VMM=xen
++PACKAGE=$(shell dh_listpackages)
++export DESTDIR=$(shell pwd)/debian/qubes-core-dom0
++
++%:
++	dh $@
++
++override_dh_clean:
++	dh_clean -d
++
++override_dh_auto_configure:
++
++override_dh_auto_build:
++	
++override_dh_install:  
++	make all
++	make install
++	 
++	mkdir -p $(DESTDIR)/etc/qubes/backup
++override_dh_usrlocal:
++
++override_dh_strip:
++# This has been known to break on some wacky binaries.
++	#	dh_strip
++
++override_dh_fixperms:
++#	dh_fixperms
++
++override_dh_shlibdeps:
++	-dh_shlibdeps
++
+diff -urN qubes-core-admin/linux/aux-tools/fix-dir-perms.sh qubes-core-admin_n/linux/aux-tools/fix-dir-perms.sh
+--- qubes-core-admin/linux/aux-tools/fix-dir-perms.sh	2023-03-09 12:07:00.340077827 -0300
++++ qubes-core-admin_n/linux/aux-tools/fix-dir-perms.sh	2023-03-09 12:06:20.967053090 -0300
+@@ -15,4 +15,9 @@
+ chmod 660 /dev/xen/evtchn
+ chgrp -R qubes /var/log/xen
+ chmod -R g+rX /var/log/xen
+-chmod g+s /var/log/xen/console
++
++if [ -e /var/log/xen/console ]; then
++   chmod g+s /var/log/xen/console
++else
++   echo "xen/console doesn't exist"
++fi
+diff -urN qubes-core-admin/linux/aux-tools/startup-misc.sh qubes-core-admin_n/linux/aux-tools/startup-misc.sh
+--- qubes-core-admin/linux/aux-tools/startup-misc.sh	2023-03-09 12:07:00.340077827 -0300
++++ qubes-core-admin_n/linux/aux-tools/startup-misc.sh	2023-03-09 12:06:20.967053090 -0300
+@@ -3,6 +3,9 @@
+ # Misc dom0 startup setup
+ 
+ /usr/lib/qubes/fix-dir-perms.sh
++
++echo "setting xen config"
++
+ DOM0_MAXMEM=$(/usr/sbin/xl list 0 | tail -1 | awk '{ print $3 }')
+ xenstore-write /local/domain/0/memory/static-max $[ $DOM0_MAXMEM * 1024 ]
+ 
+diff -urN qubes-core-admin/Makefile qubes-core-admin_n/Makefile
+--- qubes-core-admin/Makefile	2023-03-09 12:07:00.336077717 -0300
++++ qubes-core-admin_n/Makefile	2023-03-09 12:06:20.963052992 -0300
+@@ -166,13 +166,13 @@
+ 	$(MAKE) install -C linux/system-config
+ endif
+ 	$(PYTHON) setup.py install -O1 --skip-build --root $(DESTDIR)
+-	ln -s qvm-device $(DESTDIR)/usr/bin/qvm-block
+-	ln -s qvm-device $(DESTDIR)/usr/bin/qvm-pci
+-	ln -s qvm-device $(DESTDIR)/usr/bin/qvm-usb
++	ln -f -s qvm-device $(DESTDIR)/usr/bin/qvm-block
++	ln -f -s qvm-device $(DESTDIR)/usr/bin/qvm-pci
++	ln -f -s qvm-device $(DESTDIR)/usr/bin/qvm-usb
+ 	install -d $(DESTDIR)/usr/share/man/man1
+-	ln -s qvm-device.1.gz $(DESTDIR)/usr/share/man/man1/qvm-block.1.gz
+-	ln -s qvm-device.1.gz $(DESTDIR)/usr/share/man/man1/qvm-pci.1.gz
+-	ln -s qvm-device.1.gz $(DESTDIR)/usr/share/man/man1/qvm-usb.1.gz
++	ln -f -s qvm-device.1.gz $(DESTDIR)/usr/share/man/man1/qvm-block.1.gz
++	ln -f -s qvm-device.1.gz $(DESTDIR)/usr/share/man/man1/qvm-pci.1.gz
++	ln -f -s qvm-device.1.gz $(DESTDIR)/usr/share/man/man1/qvm-usb.1.gz
+ 	$(MAKE) install -C relaxng
+ 	mkdir -p $(DESTDIR)/etc/qubes
+ ifeq ($(BACKEND_VMM),xen)
+@@ -197,11 +197,11 @@
+ 	install -m 0755 qvm-tools/qvm-sync-clock $(DESTDIR)/usr/bin/qvm-sync-clock
+ 	install -m 0755 qvm-tools/qvm-console-dispvm $(DESTDIR)/usr/bin/qvm-console-dispvm
+ 	for method in $(ADMIN_API_METHODS_SIMPLE); do \
+-		ln -s ../../var/run/qubesd.sock \
++		ln -f -s ../../var/run/qubesd.sock \
+ 			$(DESTDIR)/etc/qubes-rpc/$$method || exit 1; \
+ 	done
+ 	install qubes-rpc/admin.vm.volume.Import $(DESTDIR)/etc/qubes-rpc/
+-	ln -s admin.vm.volume.Import $(DESTDIR)/etc/qubes-rpc/admin.vm.volume.ImportWithSize
++	ln -f -s admin.vm.volume.Import $(DESTDIR)/etc/qubes-rpc/admin.vm.volume.ImportWithSize
+ 	install qubes-rpc/admin.vm.Console $(DESTDIR)/etc/qubes-rpc/
+ 	PYTHONPATH=.:test-packages qubes-rpc-policy/generate-admin-policy \
+ 		--dest=$(DESTDIR)/etc/qubes/policy.d/90-admin-default.policy \

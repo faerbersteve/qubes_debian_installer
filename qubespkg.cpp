@@ -63,6 +63,7 @@ int qubesPkg::unzip()
 {
     std::string cmd{};
     std::string folderName{};
+    std::string patchFile{};
     int ret{0};
 
     cout << "Unzip package " << projectName << endl;
@@ -105,6 +106,20 @@ int qubesPkg::unzip()
     {
         cout << "error while renaming folder..." << endl;
         return ret;
+    }
+
+    patchFile="../patches/"+projectName +".diff";
+    //check for patchfile
+    if (file_exists(patchFile))
+    {
+        cmd= "patch -p0 -i " + patchFile;
+        ret=runCmd(cmd);
+
+        if (ret!=0)
+        {
+            cout << "error while applying patch..." << endl;
+            return ret;
+        }
     }
 
     readVersion();

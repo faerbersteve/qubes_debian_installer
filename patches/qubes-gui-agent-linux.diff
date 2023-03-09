@@ -1,0 +1,16 @@
+diff -urN a/Makefile qubes-gui-agent-linux/Makefile
+--- a/Makefile	2023-03-09 12:41:34.997250588 -0300
++++ qubes-gui-agent-linux/Makefile	2023-03-09 12:42:10.085828341 -0300
+@@ -176,10 +176,10 @@
+ 		$(DESTDIR)/etc/profile.d/qubes-gui.csh
+ 	install -m 0644 -D appvm-scripts/etc/securitylimits.d/90-qubes-gui.conf \
+ 		$(DESTDIR)/etc/security/limits.d/90-qubes-gui.conf
+-ifneq ($(shell lsb_release -is), Ubuntu)
++#ifneq ($(shell lsb_release -is), Ubuntu)
+ 	install -m 0644 -D appvm-scripts/etc/xdg/Trolltech.conf \
+ 		$(DESTDIR)/etc/xdg/Trolltech.conf
+-endif
++#endif
+ 	install -m 0644 -D appvm-scripts/qubes-gui-vm.gschema.override \
+ 		$(DESTDIR)$(DATADIR)/glib-2.0/schemas/20_qubes-gui-vm.gschema.override
+ 	install -d $(DESTDIR)/etc/qubes-rpc

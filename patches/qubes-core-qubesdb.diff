@@ -1,0 +1,54 @@
+diff -urN qubes-core-qubesdb/debian/control qubes-core-qubesdb_n/debian/control
+--- qubes-core-qubesdb/debian/control	2023-03-09 11:56:39.400646918 -0300
++++ qubes-core-qubesdb_n/debian/control	2023-03-09 11:56:03.276379137 -0300
+@@ -27,6 +27,12 @@
+ Depends: qubesdb, ${misc:Depends}
+ Description: QubesDB VM service.
+ 
++Package: qubesdb-dom0
++Section: admin
++Architecture: amd64
++Depends: qubesdb, ${misc:Depends}
++Description: QubesDB dom0 service.
++
+ Package: libqubesdb
+ Section: libs
+ Architecture: amd64
+diff -urN qubes-core-qubesdb/debian/qubesdb-dom0.install qubes-core-qubesdb_n/debian/qubesdb-dom0.install
+--- qubes-core-qubesdb/debian/qubesdb-dom0.install	1969-12-31 21:00:00.000000000 -0300
++++ qubes-core-qubesdb_n/debian/qubesdb-dom0.install	2023-03-09 11:56:03.276379137 -0300
+@@ -0,0 +1 @@
++lib/systemd/system/qubes-db-dom0.service
+diff -urN qubes-core-qubesdb/debian/qubesdb-dom0.postinst qubes-core-qubesdb_n/debian/qubesdb-dom0.postinst
+--- qubes-core-qubesdb/debian/qubesdb-dom0.postinst	1969-12-31 21:00:00.000000000 -0300
++++ qubes-core-qubesdb_n/debian/qubesdb-dom0.postinst	2023-03-09 11:56:03.276379137 -0300
+@@ -0,0 +1,7 @@
++#!/bin/bash
++# postinst script for core-agent-linux
++#
++# see: dh_installdeb(1)
++
++
++systemctl enable qubes-db-dom0.service > /dev/null
+diff -urN qubes-core-qubesdb/debian/qubesdb-dom0.prerm qubes-core-qubesdb_n/debian/qubesdb-dom0.prerm
+--- qubes-core-qubesdb/debian/qubesdb-dom0.prerm	1969-12-31 21:00:00.000000000 -0300
++++ qubes-core-qubesdb_n/debian/qubesdb-dom0.prerm	2023-03-09 11:56:03.276379137 -0300
+@@ -0,0 +1,10 @@
++#!/bin/sh
++# prerm script for core-agent-linux
++#
++# see: dh_installdeb(1)
++
++set -e
++
++if [ $1 = "remove" ]; then
++    systemctl disable qubes-db-dom0.service > /dev/null
++fi
+diff -urN qubes-core-qubesdb/debian/rules qubes-core-qubesdb_n/debian/rules
+--- qubes-core-qubesdb/debian/rules	2023-03-09 11:56:39.400646918 -0300
++++ qubes-core-qubesdb_n/debian/rules	2023-03-09 11:56:03.276379137 -0300
+@@ -26,3 +26,4 @@
+ 	done
+ 	mkdir -p $(DESTDIR)/lib/systemd/system
+ 	install -p -m 644 daemon/qubes-db.service $(DESTDIR)/lib/systemd/system
++	install -p -m 644 daemon/qubes-db-dom0.service $(DESTDIR)/lib/systemd/system
