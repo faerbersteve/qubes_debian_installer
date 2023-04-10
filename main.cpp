@@ -133,6 +133,7 @@ int main(int argc, char** argv)
     bool hasError{false};
     bool createPackages{false};
     bool installQubes{false};
+    bool installQubesManagerOnly{false};
     bool showHelp{true};
     bool noRoot{false};
     bool debug{false};
@@ -152,8 +153,12 @@ int main(int argc, char** argv)
                 createPackages=true;
                 showHelp=false;
             }
-            else if (arg=="-install")
+            else if (arg.length()>8 && arg.substr(0,8)=="-install")
             {
+                if (arg.substr(8)=="=qubes-manager")
+                {
+                    installQubesManagerOnly=true;
+                }
                 installQubes=true;
                 showHelp=false;
             }
@@ -262,13 +267,14 @@ int main(int argc, char** argv)
     {
         cout << "starting with installation..." << endl;
 
-        helper=new qubesInstallHelper(packages);
+        helper=new qubesInstallHelper(packages,folderName,installQubesManagerOnly);
 
         helper->debug=debug;
-        helper->folder=folderName;
-        helper->install();
 
-        cout << endl << "installation finished, please reboot" << endl;
+        if (helper->install())
+        {
+            cout << endl << "installation finished, please reboot" << endl;
+        }
     }
     else
     {

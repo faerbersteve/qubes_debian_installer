@@ -131,9 +131,33 @@ int qubesPkg::unzip()
     return 0;
 }
 
-void qubesPkg::addPackageName(std::string pkgName, PkgInstallFlag installForBuildProc)
+void qubesPkg::addPackageName(std::string _pkgName, PkgInstallFlag installForBuildProc)
 { 
-    packages.insert(std::pair<std::string,PkgInstallFlag>(pkgName,installForBuildProc));
+    pkgName* n=new pkgName();
+    n->name=_pkgName;
+    n->install=installForBuildProc;
+
+    packages.push_back(n);
+}
+
+void qubesPkg::changePackageNameFlag(std::string pkgName, PkgInstallFlag installForBuildProc)
+{
+    for(auto p:packages)
+    {
+        if (p->name==pkgName)
+        {
+            p->install=installForBuildProc;
+            break;
+        }
+    }
+}
+
+void qubesPkg::changePackageNameFlagAll(PkgInstallFlag installForBuildProc)
+{
+    for(auto p:packages)
+    {
+        p->install=installForBuildProc;
+    }
 }
 
 int qubesPkg::createPackage()
@@ -157,7 +181,7 @@ int qubesPkg::createPackage()
 
     if (projectName=="qubes-gui-agent-linux")
     {
-    	cout << "Download pulsecore" << endl;
+        cout << "Download pulsecore" << endl;
         cmd="cd " + projectName + " && ./get-latest-pulsecore.sh";
         ret=runCmd(cmd);
     }
@@ -227,15 +251,15 @@ int qubesPkg::installPackages(bool all)
 {
     for(auto pkg : packages)
     {
-        if (!all && (pkg.second==PkgInstallFlag::FOR_DEV || pkg.second==PkgInstallFlag::ALL))
+        if (!all && (pkg->install==PkgInstallFlag::FOR_DEV || pkg->install==PkgInstallFlag::ALL))
         {
             //install for build process
-            installPkg(pkg.first);
+            installPkg(pkg->name);
         }
-        else if (all && (pkg.second==PkgInstallFlag::FOR_PROD || pkg.second==PkgInstallFlag::ALL))
+        else if (all && (pkg->install==PkgInstallFlag::FOR_PROD || pkg->install==PkgInstallFlag::ALL))
         {
             //install for production
-            installPkg(pkg.first);
+            installPkg(pkg->name);
         }
     }
 
@@ -277,7 +301,7 @@ int qubesPkg::readVersion()
         std::string tmpStr;
         int pos{0};
 
-        pkgName1=packages.begin()->first;
+        pkgName1=(*packages.begin())->name;
 
         d=opendir(".");
 
@@ -363,7 +387,7 @@ int qubesPkg::installPkg(std::string pkg)
         //try all deb file
         pkgFile="./"+pkg+"_"+packageVersion+debPkgEndAll;
     }
- 
+
     if (!file_exists(pkgFile))
     {
         for(int i=1;i <9;i++)
@@ -380,8 +404,8 @@ int qubesPkg::installPkg(std::string pkg)
         }
     }
     
-      //try 1 file, fix for libvchan-xen1
-      if (!file_exists(pkgFile))
+    //try 1 file, fix for libvchan-xen1
+    if (!file_exists(pkgFile))
     {
         for(int i=1;i <9;i++)
         {

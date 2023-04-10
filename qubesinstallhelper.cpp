@@ -1,4 +1,4 @@
-#include "qubesinstallhelper.h"
+﻿#include "qubesinstallhelper.h"
 #include <iostream>
 #include <fstream>
 #include <unistd.h>
@@ -12,50 +12,80 @@ inline bool file_exists (const std::string& name) {
     return (stat (name.c_str(), &buffer) == 0);
 }
 
-qubesInstallHelper::qubesInstallHelper(std::vector<qubesPkg *> p,std::string f)
+qubesInstallHelper::qubesInstallHelper(std::vector<qubesPkg *> pkgs,std::string f,bool iQubesManOnly)
 {
-    packages=p;
     folder=f;
+    installQubesManagerOnly=iQubesManOnly;
+
+    if (iQubesManOnly)
+    {
+        //add only needed packages
+        for(qubesPkg* p:pkgs)
+        {
+            if (p->projectName=="qubes-core-admin-client" || p->projectName=="qubes-artwork" || p->projectName=="qubes-python-qasync"
+                    || p->projectName=="qubes-repo-templates" || p->projectName=="qubes-rpm-oxide"  || p->projectName=="qubes-manager"
+                    || p->projectName=="qubes-app-linux-img-converter" || p->projectName=="qubes-desktop-linux-common" )
+            {
+                packages.push_back(p);
+            }
+            else if (p->projectName=="qubes-linux-utils")
+            {
+                //only imgconv
+                p->changePackageNameFlagAll(PkgInstallFlag::IGNORE);
+                p->changePackageNameFlag("python3-qubesimgconverter",PkgInstallFlag::FOR_PROD);
+
+                packages.push_back(p);
+            }
+        }
+    }
+    else
+    {
+        //add all
+        packages=pkgs;
+    }
 }
 
-void qubesInstallHelper::install()
+bool qubesInstallHelper::install()
 {
     int ret=0;
     bool hasError{false};
 
     if (!file_exists(folder))
     {
-        cout << "Couldn't find folder with deb packages" << endl;
-        return;
+        cout << "Couldn't find folder " << folder << " with deb packages" << endl;
+        return false;
     }
 
     chdir(folder.c_str());
 
-    //prepare host
-    cout << "Prepare host.." << endl;
+    if (!installQubesManagerOnly)
+    {
+        //prepare host
+        cout << "Prepare host.." << endl;
 
-    runCmd("hostnamectl set-hostname dom0");
+        runCmd("hostnamectl set-hostname dom0");
 
-    runCmd("mkdir -p /run/qubes");
-    runCmd("chmod 777 -R /run/qubes");
-    runCmd("mkdir -p /var/log/qubes");
-    runCmd("chmod 777 -R /var/log/qubes");
+        runCmd("mkdir -p /run/qubes");
+        runCmd("chmod 777 -R /run/qubes");
+        runCmd("mkdir -p /var/log/qubes");
+        runCmd("chmod 777 -R /var/log/qubes");
 
-    //check for xen
+        //check for xen
 
-    //activate xen
-    cout << "Activate xen..." << endl;
+        //activate xen
+        cout << "Activate xen..." << endl;
 
-    runCmd("modprobe xen-gntalloc");
-    runCmd("modprobe xen-gntdev");
-    runCmd("modprobe xen-evtchn");
+        runCmd("modprobe xen-gntalloc");
+        runCmd("modprobe xen-gntdev");
+        runCmd("modprobe xen-evtchn");
 
-    runCmd("chmod 777 -R /dev/xen");
+        runCmd("chmod 777 -R /dev/xen");
 
-    writeModuleLoadConf();
+        writeModuleLoadConf();
+    }
 
     //start install
-    cout << "Start installation.." << endl;
+    cout << "Start installation " << (installQubesManagerOnly?"qubes-manager only":"qubes") << ".." << endl;
 
     for(auto p : packages)
     {
@@ -99,7 +129,10 @@ void qubesInstallHelper::install()
     if (hasError)
     {
         cout << "Installation failed with error" << endl;
+        return false;
     }
+
+    return true;
 }
 
 qubesPkg *qubesInstallHelper::getProjPackage(string name)

@@ -24,6 +24,8 @@ public:
     int unzip();
 
     void addPackageName(std::string pkgName,PkgInstallFlag installForBuildProc);
+    void changePackageNameFlag(std::string pkgName,PkgInstallFlag installForBuildProc);
+    void changePackageNameFlagAll(PkgInstallFlag installForBuildProc);
 
     int createPackage();
 
@@ -39,10 +41,17 @@ public:
     bool usePersonalRepo{false};
     std::string projectName{};
 private:
+    class pkgName
+    {
+    public:
+        std::string name;
+        PkgInstallFlag install{PkgInstallFlag::IGNORE};
+    };
+
     std::string projectUrl{};
     std::string packageVersion{};
 
-    std::map<std::string,PkgInstallFlag> packages{};
+    std::vector<pkgName*> packages{};
     std::vector<std::string> installedPkg{};
 
     int installPkg(std::string pkg);
