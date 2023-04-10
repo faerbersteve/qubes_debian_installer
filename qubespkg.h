@@ -34,6 +34,7 @@ public:
     int readVersion();
 
     static void initForCreate();
+    static std::string outputFolder;
 
     bool usePersonalRepo{false};
     std::string projectName{};

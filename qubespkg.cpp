@@ -8,6 +8,8 @@
 
 using namespace std;
 
+std::string qubesPkg::outputFolder{"output"};
+
 const char* vmKernelPackage="kernel-latest-qubes-vm-5.16.13-2.fc32.qubes.x86_64.rpm";
 const char* vmKernelDownload="https://ftp.qubes-os.org/repo/yum/r4.1/current/dom0/fc32/rpm/";
 const char* githubUrl="https://github.com/QubesOS/{0}/archive/refs/heads/master.zip";
@@ -331,9 +333,9 @@ void qubesPkg::initForCreate()
 {
     std::string numpy="python3-numpy";
     
-    runCmd("mkdir -p output && chmod 777 output");
+    runCmd("mkdir -p " + outputFolder + " && chmod 777 " + outputFolder);
 
-    chdir("output");
+    chdir(outputFolder.c_str());
     
     //fix for missing python3-numpy
     if (!isPackageInstalled(numpy))

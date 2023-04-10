@@ -128,6 +128,7 @@ int main(int argc, char** argv)
     std::vector<qubesPkg*> packages{};
     qubesInstallHelper* helper=nullptr;
     std::string arg{};
+    std::string folderName{"output"};
     int ret{0};
     bool hasError{false};
     bool createPackages{false};
@@ -156,6 +157,10 @@ int main(int argc, char** argv)
                 installQubes=true;
                 showHelp=false;
             }
+            else if (arg.length()>8 && arg.substr(0,8)=="-folder=")
+            {
+              folderName=arg.substr(8);
+            }
             else if (arg=="-noroot")
             {
                 noRoot=true;
@@ -175,9 +180,10 @@ int main(int argc, char** argv)
     if (showHelp)
     {
         cout << "Possible args:" << endl;
-        cout << "-create    create the debian packages" << endl;
-        cout << "-install   install qubes with the debian packages" << endl;
-        cout << "-noroot    ignore missing root privileges" << endl;
+        cout << "-create        create the debian packages" << endl;
+        cout << "-install       install qubes with the debian packages" << endl;
+        cout << "-folder=[NAME] set the folder name, default is output" << endl;
+        cout << "-noroot        ignore missing root privileges" << endl;
 
         return 0;
     }
@@ -196,6 +202,7 @@ int main(int argc, char** argv)
 
         cout << "starting with downloading and creating deb packages..." << endl;
 
+        qubesPkg::outputFolder=folderName;
         qubesPkg::initForCreate();
 
         for(auto p :packages)
@@ -258,6 +265,7 @@ int main(int argc, char** argv)
         helper=new qubesInstallHelper(packages);
 
         helper->debug=debug;
+        helper->folder=folderName;
         helper->install();
 
         cout << endl << "installation finished, please reboot" << endl;

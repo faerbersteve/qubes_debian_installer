@@ -9,13 +9,13 @@ public:
     qubesInstallHelper(std::vector<qubesPkg*> packages,std::string folder="output");
 
     bool debug{false};
+    std::string folder{"output"};
 
     void install();
 
     void writeModuleLoadConf();
 private:
     std::vector<qubesPkg*> packages;
-    std::string folder{"output"};
 
     qubesPkg* getProjPackage(std::string name);
 
