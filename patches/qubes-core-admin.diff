@@ -267,41 +267,4 @@ diff -urN qubes-core-admin/linux/aux-tools/startup-misc.sh qubes-core-admin_n/li
 +
  DOM0_MAXMEM=$(/usr/sbin/xl list 0 | tail -1 | awk '{ print $3 }')
  xenstore-write /local/domain/0/memory/static-max $[ $DOM0_MAXMEM * 1024 ]
- 
-diff -urN qubes-core-admin/Makefile qubes-core-admin_n/Makefile
---- qubes-core-admin/Makefile	2023-03-09 12:07:00.336077717 -0300
-+++ qubes-core-admin_n/Makefile	2023-03-09 12:06:20.963052992 -0300
-@@ -166,13 +166,13 @@
- 	$(MAKE) install -C linux/system-config
- endif
- 	$(PYTHON) setup.py install -O1 --skip-build --root $(DESTDIR)
--	ln -s qvm-device $(DESTDIR)/usr/bin/qvm-block
--	ln -s qvm-device $(DESTDIR)/usr/bin/qvm-pci
--	ln -s qvm-device $(DESTDIR)/usr/bin/qvm-usb
-+	ln -f -s qvm-device $(DESTDIR)/usr/bin/qvm-block
-+	ln -f -s qvm-device $(DESTDIR)/usr/bin/qvm-pci
-+	ln -f -s qvm-device $(DESTDIR)/usr/bin/qvm-usb
- 	install -d $(DESTDIR)/usr/share/man/man1
--	ln -s qvm-device.1.gz $(DESTDIR)/usr/share/man/man1/qvm-block.1.gz
--	ln -s qvm-device.1.gz $(DESTDIR)/usr/share/man/man1/qvm-pci.1.gz
--	ln -s qvm-device.1.gz $(DESTDIR)/usr/share/man/man1/qvm-usb.1.gz
-+	ln -f -s qvm-device.1.gz $(DESTDIR)/usr/share/man/man1/qvm-block.1.gz
-+	ln -f -s qvm-device.1.gz $(DESTDIR)/usr/share/man/man1/qvm-pci.1.gz
-+	ln -f -s qvm-device.1.gz $(DESTDIR)/usr/share/man/man1/qvm-usb.1.gz
- 	$(MAKE) install -C relaxng
- 	mkdir -p $(DESTDIR)/etc/qubes
- ifeq ($(BACKEND_VMM),xen)
-@@ -197,11 +197,11 @@
- 	install -m 0755 qvm-tools/qvm-sync-clock $(DESTDIR)/usr/bin/qvm-sync-clock
- 	install -m 0755 qvm-tools/qvm-console-dispvm $(DESTDIR)/usr/bin/qvm-console-dispvm
- 	for method in $(ADMIN_API_METHODS_SIMPLE); do \
--		ln -s ../../var/run/qubesd.sock \
-+		ln -f -s ../../var/run/qubesd.sock \
- 			$(DESTDIR)/etc/qubes-rpc/$$method || exit 1; \
- 	done
- 	install qubes-rpc/admin.vm.volume.Import $(DESTDIR)/etc/qubes-rpc/
--	ln -s admin.vm.volume.Import $(DESTDIR)/etc/qubes-rpc/admin.vm.volume.ImportWithSize
-+	ln -f -s admin.vm.volume.Import $(DESTDIR)/etc/qubes-rpc/admin.vm.volume.ImportWithSize
- 	install qubes-rpc/admin.vm.Console $(DESTDIR)/etc/qubes-rpc/
- 	PYTHONPATH=.:test-packages qubes-rpc-policy/generate-admin-policy \
- 		--dest=$(DESTDIR)/etc/qubes/policy.d/90-admin-default.policy \
+

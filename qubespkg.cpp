@@ -10,8 +10,8 @@ using namespace std;
 
 std::string qubesPkg::outputFolder{"output"};
 
-const char* vmKernelPackage="kernel-latest-qubes-vm-5.16.13-2.fc32.qubes.x86_64.rpm";
-const char* vmKernelDownload="https://ftp.qubes-os.org/repo/yum/r4.1/current/dom0/fc32/rpm/";
+const char* vmKernelPackage="kernel-latest-qubes-vm-6.3.9-1.qubes.fc37.x86_64.rpm";
+const char* vmKernelDownload="https://ftp.qubes-os.org/repo/yum/r4.2/current/dom0/fc37/rpm/";
 const char* githubUrl="https://github.com/QubesOS/{0}/archive/refs/heads/master.zip";
 const char* githubPersUrl="https://github.com/faerbersteve/{0}/archive/refs/heads/master.zip";
 const char* debPkgBuildCmd="dpkg-buildpackage -uc -b";
