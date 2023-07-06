@@ -11,6 +11,7 @@ using namespace std;
 std::string qubesPkg::outputFolder{"output"};
 
 const char* vmKernelPackage="kernel-latest-qubes-vm-6.3.9-1.qubes.fc37.x86_64.rpm";
+const char* vmModulePackage="kernel-latest-modules-6.3.9-1.qubes.fc37.x86_64.rpm";
 const char* vmKernelDownload="https://ftp.qubes-os.org/repo/yum/r4.2/current/dom0/fc37/rpm/";
 const char* githubUrl="https://github.com/QubesOS/{0}/archive/refs/heads/master.zip";
 const char* githubPersUrl="https://github.com/faerbersteve/{0}/archive/refs/heads/master.zip";
@@ -208,6 +209,21 @@ int qubesPkg::createPackage()
 
         //convert package
         runCmd("alien -d --scripts ./" + projectName+ "/" + vmKernelPackage);
+
+        cout << "Download vm module package (faster way)" << endl;
+
+        cmd="cd " + projectName + " && wget -c " + vmKernelDownload+vmModulePackage;
+
+        ret =runCmd(cmd);
+
+        if (ret!=0)
+        {
+            cout << "error while downloading package..." << endl;
+            return -1;
+        }
+
+        //convert package
+        runCmd("alien -d --scripts ./" + projectName+ "/" + vmModulePackage);
 
         return 0;
     }

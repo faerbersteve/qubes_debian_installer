@@ -55,6 +55,7 @@ std::vector<qubesPkg*> getPackages()
 
     qPack=new qubesPkg("qubes-linux-kernel");
     qPack->addPackageName("kernel-latest-qubes-vm", PkgInstallFlag::FOR_PROD);
+    qPack->addPackageName("kernel-latest-modules", PkgInstallFlag::FOR_PROD);
 
     packages.push_back(qPack);
 
