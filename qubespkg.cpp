@@ -210,20 +210,20 @@ int qubesPkg::createPackage()
         //convert package
         runCmd("alien -d --scripts ./" + projectName+ "/" + vmKernelPackage);
 
-        cout << "Download vm module package (faster way)" << endl;
+//        cout << "Download vm module package (faster way)" << endl;
 
-        cmd="cd " + projectName + " && wget -c " + vmKernelDownload+vmModulePackage;
+//        cmd="cd " + projectName + " && wget -c " + vmKernelDownload+vmModulePackage;
 
-        ret =runCmd(cmd);
+//        ret =runCmd(cmd);
 
-        if (ret!=0)
-        {
-            cout << "error while downloading package..." << endl;
-            return -1;
-        }
+//        if (ret!=0)
+//        {
+//            cout << "error while downloading package..." << endl;
+//            return -1;
+//        }
 
-        //convert package
-        runCmd("alien -d --scripts ./" + projectName+ "/" + vmModulePackage);
+//        //convert package
+//        runCmd("alien -d --scripts ./" + projectName+ "/" + vmModulePackage);
 
         return 0;
     }
