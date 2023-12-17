@@ -100,7 +100,7 @@ bool qubesInstallHelper::install()
 
         cout << "Install project-packages " << p->projectName << endl;
 
-        p->installPackages(true);
+        ret=p->installPackages(true);
 
         if (ret!=0)
         {
