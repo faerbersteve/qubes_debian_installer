@@ -28,6 +28,9 @@ void debianControlFile::readFile()
     {
         std::getline(f, line);
 
+        if (line.length()==0)
+            continue;
+
         if (!buildDepBkl)
         {
             iPos=line.find("Build-Depends:");
