@@ -125,8 +125,6 @@ int qubesPkg::unzip()
         }
     }
 
-    readVersion();
-
     cout << "unzipped" << endl;
 
     return 0;
@@ -265,17 +263,25 @@ int qubesPkg::createPackage()
 
 int qubesPkg::installPackages(bool all)
 {
+    int ret{0};
+
     for(auto pkg : packages)
     {
         if (!all && (pkg->install==PkgInstallFlag::FOR_DEV || pkg->install==PkgInstallFlag::ALL))
         {
             //install for build process
-            installPkg(pkg->name);
+            ret=installPkg(pkg->name);
+
+            if (ret!=0)
+                return ret;
         }
         else if (all && (pkg->install==PkgInstallFlag::FOR_PROD || pkg->install==PkgInstallFlag::ALL))
         {
             //install for production
-            installPkg(pkg->name);
+            ret=installPkg(pkg->name);
+
+            if (ret!=0)
+                return ret;
         }
     }
 
@@ -445,7 +451,7 @@ int qubesPkg::installPkg(std::string pkg)
 
         if (ret!=0)
         {
-            cout << "error while installing package..." << endl;
+            cout << "error while installing package " << pkgFile << endl;
             return -1;
         }
 

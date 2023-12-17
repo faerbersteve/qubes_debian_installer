@@ -221,6 +221,14 @@ int main(int argc, char** argv)
                 break;
             }
 
+            ret=p->readVersion();
+            if (ret!=0)
+            {
+                cout << "Error while reading version of project " << p->projectName << endl;
+                hasError=true;
+                break;
+            }
+
             ret=p->createPackage();
 
             if (ret!=0)
