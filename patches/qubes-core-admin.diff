@@ -2,7 +2,7 @@ diff -urN qubes-core-admin/debian/changelog qubes-core-admin_n/debian/changelog
 --- qubes-core-admin/debian/changelog	1969-12-31 21:00:00.000000000 -0300
 +++ qubes-core-admin_n/debian/changelog	2023-03-09 12:06:20.967053090 -0300
 @@ -0,0 +1,2 @@
-+qubes-core-dom0 (4.1.26-2) experimental; urgency=low
++qubes-core-dom0 (4.2.20-2) experimental; urgency=low
 +
 diff -urN qubes-core-admin/debian/compat qubes-core-admin_n/debian/compat
 --- qubes-core-admin/debian/compat	1969-12-31 21:00:00.000000000 -0300
@@ -46,15 +46,15 @@ diff -urN qubes-core-admin/debian/copyright qubes-core-admin_n/debian/copyright
 +
 +Information from the binary package:
 +Name        : qubes-core-dom0
-+Version     : 4.1.26
-+Release     : 1.fc32
++Version     : 4.2.20
++Release     : 1.fc37
 +Architecture: noarch
 +Install Date: (not installed)
 +Group       : Qubes
 +Size        : 3765439
 +License     : GPL
 +Signature   : RSA/SHA256, Sa 05 Mär 2022 03:29:05, Key ID 1848792f9e2795e9
-+Source RPM  : qubes-core-dom0-4.1.26-1.fc32.src.rpm
++Source RPM  : qubes-core-dom0-4.2.20-1.fc37.src.rpm
 +Build Date  : Fr 04 Mar 2022 21:00:00
 +Build Host  : reproducible
 +Vendor      : Invisible Things Lab
