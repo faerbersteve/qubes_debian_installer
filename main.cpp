@@ -154,7 +154,7 @@ int main(int argc, char** argv)
                 createPackages=true;
                 showHelp=false;
             }
-            else if (arg.length()>8 && arg.substr(0,8)=="-install")
+            else if (arg.length()>=8 && arg.substr(0,8)=="-install")
             {
                 if (arg.substr(8)=="=qubes-manager")
                 {
