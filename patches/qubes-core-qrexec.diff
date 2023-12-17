@@ -96,12 +96,12 @@ diff -urN a/debian/qubes-core-qrexec.install qubes-core-qrexec/debian/qubes-core
 -lib/systemd/system/qubes-qrexec-agent.service
 -usr/bin/qrexec-client-vm
  usr/bin/qrexec-fork-server
+ usr/bin/qrexec-legacy-convert
  usr/bin/qrexec-policy-graph
- usr/bin/qrexec-policy-restore
-@@ -14,10 +7,6 @@
- usr/bin/qrexec-policy-agent
- usr/bin/qubes-policy
+@@ -17,9 +10,5 @@
  usr/bin/qubes-policy-admin
+ usr/bin/qubes-policy-editor
+ usr/bin/qubes-policy-lint
 -usr/lib/qubes/qrexec-agent
 -usr/lib/qubes/qrexec-client-vm
 -usr/lib/qubes/qrexec_client_vm
