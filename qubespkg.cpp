@@ -457,7 +457,7 @@ int qubesPkg::installPkg(std::string pkg)
 
         installedPkg.push_back(pkg);
 
-        return 1;
+        return 0;
     }
     else
     {

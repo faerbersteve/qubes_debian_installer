@@ -48,6 +48,7 @@ std::vector<qubesPkg*> getPackages()
     qPack->addPackageName("python3-qubesimgconverter", PkgInstallFlag::ALL);
     qPack->addPackageName("qubes-utils", PkgInstallFlag::FOR_PROD);
     qPack->addPackageName("qubes-kernel-vm-support", PkgInstallFlag::IGNORE);
+    qPack->addPackageName("libqubes-pure0", PkgInstallFlag::ALL);
     qPack->addPackageName("libqubes-rpc-filecopy2", PkgInstallFlag::ALL);
     qPack->addPackageName("libqubes-rpc-filecopy-dev", PkgInstallFlag::FOR_DEV);
 
