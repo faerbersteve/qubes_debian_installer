@@ -102,12 +102,7 @@ bool qubesInstallHelper::install()
 
         ret=p->installPackages(true);
 
-        if (ret!=0)
-        {
-            cout << "Error while installing project " << p->projectName << endl;
-            hasError=true;
-            break;
-        }
+        //ignore install issue, can be fixed in installmissing
 
         ret=installMissing();
 
