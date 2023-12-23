@@ -19,9 +19,9 @@ public:
     qubesPkg(std::string projName);
     qubesPkg(std::string projName, bool usePersonalRepo);
 
-    int download();
+    int download(bool patch=true);
 
-    int unzip();
+    int unzip(bool patch=true);
 
     void addPackageName(std::string pkgName,PkgInstallFlag installForBuildProc);
     void changePackageNameFlag(std::string pkgName,PkgInstallFlag installForBuildProc);

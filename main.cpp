@@ -21,8 +21,8 @@ std::vector<qubesPkg*> getPackages()
     packages.push_back(qPack);
 
     qPack=new qubesPkg("qubes-core-qubesdb");
-    qPack->addPackageName("qubesdb-dev", PkgInstallFlag::FOR_DEV);
     qPack->addPackageName("libqubesdb", PkgInstallFlag::ALL);
+    qPack->addPackageName("qubesdb-dev", PkgInstallFlag::FOR_DEV);
     qPack->addPackageName("python3-qubesdb", PkgInstallFlag::ALL);
     qPack->addPackageName("qubesdb", PkgInstallFlag::ALL);
     qPack->addPackageName("qubesdb-dom0", PkgInstallFlag::FOR_PROD);
@@ -130,9 +130,12 @@ int main(int argc, char** argv)
     qubesInstallHelper* helper=nullptr;
     std::string arg{};
     std::string folderName{"output"};
+    std::string dlProject{};
     int ret{0};
     bool hasError{false};
     bool createPackages{false};
+    bool downloadProject{false};
+    bool foundProject{false};
     bool installQubes{false};
     bool installQubesManagerOnly{false};
     bool showHelp{true};
@@ -161,7 +164,14 @@ int main(int argc, char** argv)
                     installQubesManagerOnly=true;
                 }
                 installQubes=true;
-                showHelp=false;
+
+                showHelp=downloadProject;
+            }
+            else if (arg.length()>=10 && arg.substr(0,10)=="-download=")
+            {
+                dlProject=arg.substr(10);
+                downloadProject=true;
+                showHelp=installQubes;
             }
             else if (arg.length()>8 && arg.substr(0,8)=="-folder=")
             {
@@ -188,6 +198,7 @@ int main(int argc, char** argv)
         cout << "Possible args:" << endl;
         cout << "-create        create the debian packages" << endl;
         cout << "-install       install qubes with the debian packages" << endl;
+        cout << "-download=[PROJECTNAME] download project" << endl;
         cout << "-folder=[NAME] set the folder name, default is output" << endl;
         cout << "-noroot        ignore missing root privileges" << endl;
 
@@ -270,6 +281,46 @@ int main(int argc, char** argv)
         }
 
         cout << "Created all packages, ready for install" << endl;
+    }
+    else if (downloadProject)
+    {
+        cout << "repo files will be downloaded in the output folder" << endl;
+
+        cout << "starting with downloading..." << endl;
+
+        qubesPkg::outputFolder=folderName;
+        qubesPkg::initForCreate();
+
+        for(auto p :packages)
+        {
+            if (p->projectName==dlProject)
+            {
+                foundProject=true;
+                ret=p->download(false);
+
+                if (ret!=0)
+                {
+                    cout << "Error while downloading project " << p->projectName << endl;
+                    hasError=true;
+                    break;
+                }
+
+                //download only one project
+                break;
+            }
+        }
+
+        if (!foundProject)
+        {
+            cout << "Error couldn't find project " << dlProject << endl;
+        }
+        else if (hasError)
+        {
+            getchar();
+            return ret;
+        }
+        else
+            cout << "Downloaded project" << endl;
     }
 
     if (installQubes)

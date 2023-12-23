@@ -37,7 +37,7 @@ qubesPkg::qubesPkg(std::string projName, bool usePersonalRepo)
     getProjectUrl();
 }
 
-int qubesPkg::download()
+int qubesPkg::download(bool patch)
 {
     std::string cmd{};
     int ret{0};
@@ -52,7 +52,7 @@ int qubesPkg::download()
 
         cout << "downloaded" << endl;
 
-        return unzip();
+        return unzip(patch);
     }
     else
     {
@@ -62,7 +62,7 @@ int qubesPkg::download()
     }
 }
 
-int qubesPkg::unzip()
+int qubesPkg::unzip(bool patch)
 {
     std::string cmd{};
     std::string folderName{};
@@ -113,7 +113,7 @@ int qubesPkg::unzip()
 
     patchFile="../patches/"+projectName +".diff";
     //check for patchfile
-    if (file_exists(patchFile))
+    if (file_exists(patchFile) && patch)
     {
         cmd= "patch -p0 -i " + patchFile;
         ret=runCmd(cmd);
