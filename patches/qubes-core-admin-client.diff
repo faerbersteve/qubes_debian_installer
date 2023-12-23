@@ -1,3 +1,14 @@
+diff -urN a/debian/control qubes-core-admin-client/debian/control
+--- a/debian/control	2023-12-16 08:19:06.000000000 -0300
++++ qubes-core-admin-client/debian/control	2023-12-23 09:44:38.832836110 -0300
+@@ -44,6 +44,7 @@
+  python3-lxml,
+  python3-rpm,
+  python3-tqdm,
++ python3-xcffib,
+  ${python3:Depends},
+ Description: Python 3 bindings for Qubes Admin API
+  Python 3 client side module for Qubes Admin API
 diff -urN a/debian/rules qubes-core-admin-client/debian/rules
 --- a/debian/rules	2023-03-09 12:36:27.297181853 -0300
 +++ qubes-core-admin-client/debian/rules	2023-03-09 12:35:40.124762221 -0300
@@ -45,4 +56,4 @@ diff -urN a/qubesadmin/app.py qubes-core-admin-client/qubesadmin/app.py
 +            self._local_name = "dom0" #os.uname()[1]
  
          return self._local_name
- 
+
