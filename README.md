@@ -4,6 +4,17 @@
 This is a tool to help to install qubes components on any debian based linux.
 Current function is downloading some of the qubes projects and creating the debian packages.
 
+`-create` detects the host OS: on Debian/Ubuntu it builds `.deb` packages as
+before; on Fedora it instead builds `.rpm` packages from each project's
+`rpm_spec/*.spec.in` files using `mock`, targeting a chroot matching the
+host's own Fedora version. Built rpms land in `output/rpm/<project>/`, and
+`output/rpm/repo` accumulates a local repo so later projects can resolve
+`BuildRequires` on earlier-built Qubes packages. Projects without an
+`rpm_spec` folder (e.g. `qubes-artwork`, `qubes-python-qasync`) are skipped
+on Fedora, since Fedora is expected to already provide them. Installing the
+built rpms (`-install`) is not supported yet — that path is still
+Debian/apt-specific.
+
 The project is work in progress. 
 
 

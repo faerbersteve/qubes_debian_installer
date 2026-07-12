@@ -38,6 +38,10 @@ public:
     static void initForCreate();
     static std::string outputFolder;
 
+    static bool hostIsFedora;
+    static std::string hostFedoraVersion;
+    static std::string qubesDom0RepoUrl;
+
     bool usePersonalRepo{false};
     std::string projectName{};
 private:
@@ -56,13 +60,19 @@ private:
 
     int installPkg(std::string pkg);
     static int installPkgAPT(std::string pkg);
+    static int installPkgDNF(std::string pkg);
     int removePkg(std::string pkg);
 
     static int isPackageInstalled(std::string p);
+    static int isRpmPackageInstalled(std::string p);
 
     int removeFolder();
 
     void getProjectUrl();
+
+    int createRpmPackage();
+    static void detectHostOS();
+    static std::string mockCmdPrefix();
 
     static int runCmd(std::string cmd);
 };

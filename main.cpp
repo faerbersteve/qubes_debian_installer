@@ -196,7 +196,7 @@ int main(int argc, char** argv)
     if (showHelp)
     {
         cout << "Possible args:" << endl;
-        cout << "-create        create the debian packages" << endl;
+        cout << "-create        create the packages (deb on Debian/Ubuntu, rpm via mock on Fedora)" << endl;
         cout << "-install       install qubes with the debian packages" << endl;
         cout << "-download=[PROJECTNAME] download project" << endl;
         cout << "-folder=[NAME] set the folder name, default is output" << endl;
@@ -215,9 +215,9 @@ int main(int argc, char** argv)
 
     if (createPackages)
     {
-        cout << "deb files will be created in the output folder" << endl;
+        cout << "deb (or rpm, if run on a Fedora host) files will be created in the output folder" << endl;
 
-        cout << "starting with downloading and creating deb packages..." << endl;
+        cout << "starting with downloading and creating packages..." << endl;
 
         qubesPkg::outputFolder=folderName;
         qubesPkg::initForCreate();
